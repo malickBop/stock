@@ -221,6 +221,9 @@ public class WorkflowService {
                 default -> RoleCommission.MEMBRE;
             };
             Long acteurId = r.acteurId() != null ? r.acteurId() : u.acteurId();
+            if (!Objects.equals(acteurId, u.acteurId()) && !u.estComptable() && !u.a(Role.ADMIN)) {
+                throw new AccessDeniedBusinessException("Seul le comptable des matières peut enregistrer la signature d'un autre membre de la commission");
+            }
             return c.getMembres().stream().filter(m -> m.getRoleCommission() == attendu && m.getActeur().getId().equals(acteurId))
                     .map(CommissionMembre::getActeur).findFirst()
                     .orElseThrow(() -> new BusinessException(ErrorCode.COMMISSION_INCOMPLETE,
