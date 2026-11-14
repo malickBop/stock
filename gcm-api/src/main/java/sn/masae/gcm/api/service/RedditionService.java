@@ -35,6 +35,7 @@ public class RedditionService implements ImpactHandler {
     private final ExerciceRepository exercices;
     private final BienRepository biens;
     private final SoldeOuvertureRepository soldes;
+    private final EcritureJournalRepository journal;
     private final ReferentielService referentiel;
     private final EtatService etats;
     private final WorkflowService workflow;
@@ -42,7 +43,7 @@ public class RedditionService implements ImpactHandler {
     private final AuditService audit;
 
     public RedditionService(RedditionRepository redditions, DocumentReglementaireRepository documents, StructureRepository structures,
-                            ExerciceRepository exercices, BienRepository biens, SoldeOuvertureRepository soldes, ReferentielService referentiel,
+                            ExerciceRepository exercices, BienRepository biens, SoldeOuvertureRepository soldes, EcritureJournalRepository journal, ReferentielService referentiel,
                             EtatService etats, @org.springframework.context.annotation.Lazy WorkflowService workflow, SecuriteService securite,
                             AuditService audit) {
         this.redditions = redditions;
@@ -51,6 +52,7 @@ public class RedditionService implements ImpactHandler {
         this.exercices = exercices;
         this.biens = biens;
         this.soldes = soldes;
+        this.journal = journal;
         this.referentiel = referentiel;
         this.etats = etats;
         this.workflow = workflow;
@@ -161,13 +163,18 @@ public class RedditionService implements ImpactHandler {
             n.setAnnee(e.getAnnee() + 1);
             return exercices.save(n);
         });
+        Map<Long, java.math.BigDecimal> netSuivant = new HashMap<>();
+        for (EcritureJournal ej : journal.findByExerciceId(suivant.getId())) {
+            if (ej.getBien() != null) netSuivant.merge(ej.getBien().getId(), ej.getQuantiteEntree().subtract(ej.getQuantiteSortie()), java.math.BigDecimal::add);
+        }
         for (Bien b : biens.findAll()) {
-            if (b.getExistant().signum() == 0) continue;
+            java.math.BigDecimal ouverture = b.getExistant().subtract(netSuivant.getOrDefault(b.getId(), java.math.BigDecimal.ZERO));
+            if (ouverture.signum() == 0) continue;
             SoldeOuverture so = soldes.findByExerciceIdAndBienId(suivant.getId(), b.getId()).orElseGet(SoldeOuverture::new);
             so.setExercice(suivant);
             so.setBien(b);
-            so.setQuantite(b.getExistant());
-            so.setMontant(b.getValeurExistant());
+            so.setQuantite(ouverture);
+            so.setMontant(ouverture.multiply(b.getPrixUnitaire()));
             soldes.save(so);
         }
         e.setStatut(StatutExercice.CLOTURE);

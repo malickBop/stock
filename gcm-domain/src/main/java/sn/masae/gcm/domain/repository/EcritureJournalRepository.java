@@ -14,6 +14,7 @@ public interface EcritureJournalRepository extends JpaRepository<EcritureJournal
     Long maxNumeroOrdre(@Param("s") Long structureId, @Param("x") Long exerciceId);
     List<EcritureJournal> findByStructureIdAndExerciceIdOrderByNumeroOrdreAsc(Long structureId, Long exerciceId);
     List<EcritureJournal> findByStructureIdInAndExerciceIdOrderByStructureIdAscNumeroOrdreAsc(Collection<Long> structureIds, Long exerciceId);
+    List<EcritureJournal> findByExerciceId(Long exerciceId);
     List<EcritureJournal> findByBienIdAndExerciceIdOrderByNumeroOrdreAsc(Long bienId, Long exerciceId);
     List<EcritureJournal> findByStructureIdAndExerciceIdAndCompteIdOrderByNumeroOrdreAsc(Long structureId, Long exerciceId, Long compteId);
 }
