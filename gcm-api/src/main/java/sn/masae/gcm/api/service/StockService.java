@@ -38,6 +38,9 @@ public class StockService {
         if (m.getStatut() == StatutMouvement.VALIDE) {
             throw new BusinessException(ErrorCode.CONFLIT, "Le mouvement " + m.getNumero() + " est déjà validé");
         }
+        if (m.getStatut() == StatutMouvement.ANNULE) {
+            throw new BusinessException(ErrorCode.WORKFLOW_TRANSITION_INVALIDE, "Le mouvement " + m.getNumero() + " est annulé");
+        }
         if (m.getExercice().isCloture()) {
             throw new BusinessException(ErrorCode.EXERCICE_CLOTURE, "Exercice " + m.getExercice().getAnnee() + " clôturé");
         }
