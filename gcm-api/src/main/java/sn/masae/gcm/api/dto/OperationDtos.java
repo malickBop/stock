@@ -64,7 +64,7 @@ public final class OperationDtos {
     }
 
     public record CertificatRequest(@NotNull Long structureId, Integer exercice, @NotNull ObjetCertificat objet, @NotBlank String motif,
-                                    @NotNull LocalDate dateCertificat, @NotEmpty List<@Valid MouvementDtos.LigneRequest> lignes) {
+                                    @NotNull LocalDate dateCertificat, @NotEmpty @Valid List<MouvementDtos.LigneRequest> lignes) {
     }
 
     public record CertificatDto(Long id, String numero, String structureCode, Integer exercice, ObjetCertificat objet, String motif,
