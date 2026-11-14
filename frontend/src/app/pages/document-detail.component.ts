@@ -67,7 +67,7 @@ import { NotificationService } from '../core/notification.service';
               @for (x of membres(); track x.id) { <option [ngValue]="x.acteurId">{{ x.nomComplet }} ({{ x.roleCommission }})</option> }</select></label>
             <p class="sous-titre">Enregistrement de la signature apposée sur l'original papier.</p> }
         }
-        @case ('VISA') {
+        @case ('ENREGISTRER_VISA') {
           <label class="champ">Type de visa <select name="t" [(ngModel)]="f.typeVisa" required>
             @for (t of typesVisaOptions; track t) { <option [value]="t">{{ t | lib: typesVisa }}</option> }</select></label>
           <label class="champ">Autorité <input name="au" [(ngModel)]="f.autorite"></label>
@@ -75,7 +75,7 @@ import { NotificationService } from '../core/notification.service';
           <label class="champ">Date du visa <input type="date" name="dv" [(ngModel)]="f.dateVisa" required></label>
           <label class="champ">Pièce visée (scan) <input type="file" (change)="fichier = $any($event.target).files[0]"></label>
         }
-        @case ('SCAN') { <label class="champ">Scan de la pièce signée et visée (PDF, JPEG, PNG) <input type="file" accept=".pdf,image/*" (change)="fichier = $any($event.target).files[0]" required></label> }
+        @case ('IMPORTER_SCAN') { <label class="champ">Scan de la pièce signée et visée (PDF, JPEG, PNG) <input type="file" accept=".pdf,image/*" (change)="fichier = $any($event.target).files[0]" required></label> }
         @case ('REJETER') { <label class="champ">Motif du rejet <textarea name="m" [(ngModel)]="f.motif" required rows="3"></textarea></label> }
         @default { <label class="champ">Commentaire <input name="c" [(ngModel)]="f.commentaire"></label> }
       }
@@ -125,8 +125,8 @@ export class DocumentDetailComponent {
     const req = {
       SIGNER: () => this.api.post<DocumentReglementaire>(base + '/signatures', { roleSignature: this.f.roleSignature, acteurId: this.f.acteurId, commentaire: this.f.commentaire }),
       TRANSMETTRE: () => this.api.post<DocumentReglementaire>(base + '/transmettre'),
-      VISA: () => this.api.upload<DocumentReglementaire>(base + '/visas', { typeVisa: this.f.typeVisa, autorite: this.f.autorite, reference: this.f.reference, dateVisa: this.f.dateVisa, fichier: this.fichier }),
-      SCAN: () => this.api.upload<DocumentReglementaire>(base + '/scan', { fichier: this.fichier }),
+      ENREGISTRER_VISA: () => this.api.upload<DocumentReglementaire>(base + '/visas', { typeVisa: this.f.typeVisa, autorite: this.f.autorite, reference: this.f.reference, dateVisa: this.f.dateVisa, fichier: this.fichier }),
+      IMPORTER_SCAN: () => this.api.upload<DocumentReglementaire>(base + '/scan', { fichier: this.fichier }),
       VALIDER: () => this.api.post<DocumentReglementaire>(base + '/valider', {}, { commentaire: this.f.commentaire }),
       ARCHIVER: () => this.api.post<DocumentReglementaire>(base + '/archiver'),
       REJETER: () => this.api.post<DocumentReglementaire>(base + '/rejeter', { motif: this.f.motif }),

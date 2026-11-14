@@ -66,7 +66,7 @@ export const TYPES_VISA: Record<string, string> = {
   INSPECTEUR_VERIFICATEUR: 'Inspecteur vérificateur', RECEPTIONNAIRE: 'Réceptionnaire'
 };
 export const ACTIONS: Record<string, string> = {
-  SIGNER: 'Signer', TRANSMETTRE: 'Transmettre pour visa', VISA: 'Enregistrer un visa', SCAN: 'Importer le scan', VALIDER: 'Validation finale',
+  SIGNER: 'Signer', TRANSMETTRE: 'Transmettre pour visa', ENREGISTRER_VISA: 'Enregistrer un visa', IMPORTER_SCAN: 'Importer le scan', VALIDER: 'Validation finale',
   ARCHIVER: 'Archiver', REJETER: 'Rejeter', REPRENDRE: 'Reprendre'
 };
 export const ETATS_BIEN = ['NEUF', 'BON', 'PASSABLE', 'MAUVAIS', 'HORS_USAGE'];
