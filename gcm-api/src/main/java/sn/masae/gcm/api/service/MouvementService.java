@@ -128,6 +128,19 @@ public class MouvementService implements ImpactHandler {
         audit.tracer("ANNULATION", "Mouvement", m.getId(), m.getStructure().getCode(), m.getNumero());
     }
 
+    /** Chaque ligne d'un retour doit porter sur un bien de la sortie provisoire d'origine, sans excéder la quantité sortie. */
+    private void verifierRetour(Mouvement m) {
+        Mouvement o = m.getMouvementOrigine();
+        for (LigneMouvement l : m.getLignes()) {
+            BigDecimal sorti = o.getLignes().stream()
+                    .filter(x -> x.getBien() != null && l.getBien() != null && x.getBien().getId().equals(l.getBien().getId()))
+                    .map(LigneMouvement::getQuantite).reduce(BigDecimal.ZERO, BigDecimal::add);
+            if (l.getQuantite().compareTo(sorti) > 0) {
+                throw new BusinessException(ErrorCode.VALIDATION, "Le retour excède la quantité sortie par " + o.getNumero() + " pour ce bien");
+            }
+        }
+    }
+
     /**
      * Construit un mouvement à partir de la requête, avec tous les contrôles de cohérence.
      *
@@ -190,6 +203,7 @@ public class MouvementService implements ImpactHandler {
         for (LigneRequest lr : r.lignes()) {
             m.addLigne(ligne(m, lr));
         }
+        if (m.getMouvementOrigine() != null) verifierRetour(m);
         m.setNumero(numero(m));
         return m;
     }
