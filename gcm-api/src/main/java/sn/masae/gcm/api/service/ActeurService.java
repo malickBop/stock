@@ -7,6 +7,7 @@ import sn.masae.gcm.api.security.SecuriteService;
 import sn.masae.gcm.common.exception.BusinessException;
 import sn.masae.gcm.common.exception.ErrorCode;
 import sn.masae.gcm.common.exception.NotFoundException;
+import sn.masae.gcm.common.exception.AccessDeniedBusinessException;
 import sn.masae.gcm.domain.entity.*;
 import sn.masae.gcm.domain.enums.FonctionActeur;
 import sn.masae.gcm.domain.enums.Role;
@@ -77,6 +78,12 @@ public class ActeurService {
     public ActeurDto modifier(Long id, ActeurRequest r) {
         securite.exiger(Role.ADMIN, Role.COMPTABLE_PRINCIPAL, Role.ORDONNATEUR_DELEGUE);
         Acteur a = acteur(id);
+        if (!securite.courant().perimetreGlobal()) {
+            Set<Long> p = securite.perimetre();
+            if (fonctions.findByActeurIdAndActifTrue(id).stream().anyMatch(f -> !p.contains(f.getStructure().getId()))) {
+                throw new AccessDeniedBusinessException("Acteur nommé dans une structure hors de votre périmètre");
+            }
+        }
         appliquer(a, r);
         audit.tracer("MODIFICATION", "Acteur", a.getId(), null, a.getNomComplet());
         return ActeurDto.of(a, fonctions.findByActeurIdAndActifTrue(id));
