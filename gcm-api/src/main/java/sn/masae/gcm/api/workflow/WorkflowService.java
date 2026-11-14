@@ -163,16 +163,18 @@ public class WorkflowService {
 
     private List<String> actionsPossibles(DocumentReglementaire d, UtilisateurCourant u) {
         List<String> a = new ArrayList<>();
+        boolean gestionnaire = u.estComptable() || u.estOrdonnateur() || u.a(Role.ADMIN);
         switch (d.getStatut()) {
             case BROUILLON -> a.add("SIGNER");
-            case SIGNE_COMMISSION -> a.add("TRANSMETTRE");
-            case EN_ATTENTE_VISA_EXTERNE -> { a.add("ENREGISTRER_VISA"); a.add("IMPORTER_SCAN"); }
+            case SIGNE_COMMISSION -> { if (gestionnaire) a.add("TRANSMETTRE"); }
+            case EN_ATTENTE_VISA_EXTERNE -> { if (gestionnaire) { a.add("ENREGISTRER_VISA"); a.add("IMPORTER_SCAN"); } }
             case SCAN_IMPORTE -> { if (u.a(Role.ADMIN) || u.roles().stream().anyMatch(Circuits.pour(d.getModele()).validateurs()::contains)) a.add("VALIDER"); }
-            case VALIDATION_FINALE -> a.add("ARCHIVER");
-            case REJETE -> a.add("REPRENDRE");
+            case VALIDATION_FINALE -> { if (gestionnaire) a.add("ARCHIVER"); }
+            case REJETE -> { if (u.estComptable() || u.a(Role.ADMIN)) a.add("REPRENDRE"); }
             default -> { }
         }
-        if (EnumSet.of(BROUILLON, SIGNE_COMMISSION, EN_ATTENTE_VISA_EXTERNE, SCAN_IMPORTE).contains(d.getStatut())) a.add("REJETER");
+        if (EnumSet.of(BROUILLON, SIGNE_COMMISSION, EN_ATTENTE_VISA_EXTERNE, SCAN_IMPORTE).contains(d.getStatut())
+                && (u.estComptable() || u.estOrdonnateur() || u.a(Role.CONTROLE, Role.ADMIN))) a.add("REJETER");
         return a;
     }
 
