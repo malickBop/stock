@@ -94,8 +94,9 @@ public class ReferentielSeeder implements ApplicationRunner {
         int n = 0;
         for (Row r : sh) {
             if (r.getRowNum() < 4) continue;
-            String cle = texte(r, 7);
-            if (cle == null || !cle.matches("\\d+(-\\d+){4}")) continue;
+            // La clé (colonne H) est une formule : on la reconstitue depuis les cinq segments.
+            String cle = String.join("-", texte(r, 0) == null ? "" : texte(r, 0), nz(texte(r, 1)), nz(texte(r, 2)), nz(texte(r, 3)), nz(texte(r, 4)));
+            if (!cle.matches("\\d+(-\\d+){4}")) continue;
             if (comptes.findByNumeroComplet(cle).isPresent()) continue;
             CompteNomenclature c = new CompteNomenclature();
             c.setNumeroComplet(cle);
@@ -285,6 +286,10 @@ public class ReferentielSeeder implements ApplicationRunner {
     }
 
     private static final DataFormatter FMT = new DataFormatter(Locale.FRANCE);
+
+    private static String nz(String s) {
+        return s == null ? "" : s;
+    }
 
     private static String texte(Row r, int col) {
         Cell c = r.getCell(col);
