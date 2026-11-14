@@ -2,6 +2,9 @@ package sn.masae.gcm.api.security;
 
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.authentication.DisabledException;
+import sn.masae.gcm.domain.entity.Utilisateur;
+import sn.masae.gcm.domain.repository.UtilisateurRepository;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -42,7 +45,9 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, ApiKeyFilter apiKeyFilter, RestAuthEntryPoint entryPoint) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, ApiKeyFilter apiKeyFilter, RestAuthEntryPoint entryPoint,
+                                           UtilisateurRepository utilisateurs) throws Exception {
+        JwtAuthenticationConverter roles = jwtAuthenticationConverter();
         http.csrf(c -> c.disable())
                 .cors(c -> { })
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -53,7 +58,12 @@ public class SecurityConfig {
                         .requestMatchers("/api/**").authenticated()
                         .anyRequest().permitAll())
                 .exceptionHandling(e -> e.authenticationEntryPoint(entryPoint))
-                .oauth2ResourceServer(o -> o.jwt(j -> j.jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                .oauth2ResourceServer(o -> o.jwt(j -> j.jwtAuthenticationConverter(jwt -> {
+                            if (utilisateurs.findByLogin(jwt.getSubject()).filter(Utilisateur::isActif).isEmpty()) {
+                                throw new DisabledException("Compte désactivé ou inexistant");
+                            }
+                            return roles.convert(jwt);
+                        }))
                         .authenticationEntryPoint(entryPoint))
                 .addFilterBefore(apiKeyFilter, BearerTokenAuthenticationFilter.class);
         return http.build();
