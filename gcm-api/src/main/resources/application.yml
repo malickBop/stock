@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: gcm-masae
+  datasource:
+    url: ${GCM_DB_URL:jdbc:postgresql://localhost:5432/gcm}
+    username: ${GCM_DB_USER:gcm}
+    password: ${GCM_DB_PASSWORD:gcm}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate.jdbc.time_zone: UTC
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 25MB
+  jackson:
+    default-property-inclusion: non_null
+
+server:
+  port: ${GCM_PORT:8080}
+  error:
+    include-message: never
+
+gcm:
+  jwt-secret: ${GCM_JWT_SECRET:changer-ce-secret-en-production-minimum-32-octets}
+  jwt-validite-minutes: 480
+  stockage-dir: ${GCM_STOCKAGE_DIR:./data/ged}
+  retention-annees: 10
+  seed: ${GCM_SEED:true}
+  demo-password: ${GCM_DEMO_PASSWORD:Masae@2026}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
