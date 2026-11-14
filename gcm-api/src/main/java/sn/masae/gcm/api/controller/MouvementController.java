@@ -29,11 +29,13 @@ public class MouvementController {
     }
 
     @GetMapping("/biens")
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
     public List<BienDto> biens(@RequestParam(required = false) Long structureId) {
         return biens.findByStructureIdInOrderByNumeroInventaireAsc(securite.perimetre(structureId)).stream().map(BienDto::of).toList();
     }
 
     @GetMapping("/biens/{id}")
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
     public BienDto bien(@PathVariable Long id) {
         return BienDto.of(bienAccessible(id));
     }
