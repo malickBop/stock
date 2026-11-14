@@ -35,7 +35,7 @@ interface Groupe { titre: string; entrees: Entree[]; }
       @for (g of groupes; track g.titre) {
         <div class="groupe">{{ g.titre }}</div>
         @for (e of g.entrees; track e.lien) {
-          @if (!e.roles || auth.a(...e.roles)) {
+          @if (visible(e)) {
             <a [routerLink]="e.lien" routerLinkActive="actif" (click)="ouvert.set(false)">{{ e.libelle }}</a>
           }
         }
@@ -102,6 +102,8 @@ export class ShellComponent {
       ]
     }
   ];
+
+  visible(e: Entree): boolean { return !e.roles || this.auth.a(...e.roles); }
 
   constructor() { inject(ReferentielStore).charger(); }
 }

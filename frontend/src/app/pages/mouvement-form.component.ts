@@ -53,7 +53,7 @@ import { ReferentielStore } from '../core/referentiel.store';
           <td class="num"><input type="number" min="0" step="any" [name]="'q' + i" [(ngModel)]="l.quantite" required style="width:90px"></td>
           <td class="num"><input type="number" min="0" step="any" [name]="'p' + i" [(ngModel)]="l.prixUnitaire" [readonly]="o.aBien" style="width:120px"></td>
           <td class="num">{{ (l.quantite || 0) * (l.prixUnitaire || 0) | fcfa }}</td>
-          <td><select [name]="'e' + i" [(ngModel)]="l.etat"><option [ngValue]="undefined">—</option>
+          <td><select [name]="'e' + i" [(ngModel)]="l.etat"><option [ngValue]="null">—</option>
             @for (e of etats; track e) { <option [value]="e">{{ e | lib: etatsLib }}</option> }</select></td>
           <td><button type="button" class="secondaire petit" (click)="retirer(i)" [disabled]="lignes().length === 1">✕</button></td></tr>
         }</tbody>
