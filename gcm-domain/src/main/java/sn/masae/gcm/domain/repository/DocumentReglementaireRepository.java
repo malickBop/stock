@@ -18,4 +18,5 @@ public interface DocumentReglementaireRepository extends JpaRepository<DocumentR
     Optional<DocumentReglementaire> findFirstByReformeIdAndModele(Long reformeId, Integer modele);
     Optional<DocumentReglementaire> findFirstByCertificatIdAndModele(Long certificatId, Integer modele);
     long countByModeleAndExerciceId(Integer modele, Long exerciceId);
+    boolean existsByNumero(String numero);
 }

@@ -91,7 +91,7 @@ public class WorkflowService {
     }
 
     private boolean existeNumero(String num) {
-        return documents.findAll().stream().anyMatch(d -> d.getNumero().equals(num));
+        return documents.existsByNumero(num);
     }
 
     // ---- Lecture ---------------------------------------------------------------------------
