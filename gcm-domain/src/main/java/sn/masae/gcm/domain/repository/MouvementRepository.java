@@ -11,6 +11,8 @@ import java.util.*;
 
 public interface MouvementRepository extends JpaRepository<Mouvement, Long> {
     List<Mouvement> findByStructureIdInAndExerciceIdOrderByDateMouvementDescIdDesc(Collection<Long> structureIds, Long exerciceId);
+    List<Mouvement> findByExerciceIdAndStatutOrderByDateValidationAsc(Long exerciceId, sn.masae.gcm.domain.enums.StatutMouvement statut);
+
     List<Mouvement> findByStructureIdAndExerciceIdAndStatutOrderByDateMouvementAscIdAsc(Long structureId, Long exerciceId, StatutMouvement statut);
     long countByStructureIdAndExerciceId(Long structureId, Long exerciceId);
     @Query("select m from Mouvement m where m.structure.id in :ids and m.typeMouvement = sn.masae.gcm.domain.enums.TypeMouvement.SORTIE_PROVISOIRE and m.statut = sn.masae.gcm.domain.enums.StatutMouvement.VALIDE and not exists (select r from Mouvement r where r.mouvementOrigine = m and r.statut = sn.masae.gcm.domain.enums.StatutMouvement.VALIDE)")
