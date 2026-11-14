@@ -32,19 +32,14 @@
    "N° compte de la nomenclature"
   ],
   "colonnes": [
-   "Groupe",
-   "Cpt principal",
-   "Cpt secondaire",
-   "Cpt divisionnaire",
-   "Sous-compte"
-  ],
-  "mentions": [
    "Désignation des matières",
    "Spécification",
    "Nombre d'unités",
    "Nature des unités",
    "Prix unitaire",
-   "Montant",
+   "Montant"
+  ],
+  "mentions": [
    "CERTIFICATIONS — AUGMENTATION DES PRISES EN CHARGE"
   ],
   "entete": true
@@ -58,19 +53,14 @@
    "N° compte de la nomenclature"
   ],
   "colonnes": [
-   "Groupe",
-   "Cpt principal",
-   "Cpt secondaire",
-   "Cpt divisionnaire",
-   "Sous-compte"
-  ],
-  "mentions": [
    "Désignation des matières",
    "Spécification",
    "Nombre d'unités",
    "Nature de l'unité",
    "Prix unitaire",
-   "Montant",
+   "Montant"
+  ],
+  "mentions": [
    "CERTIFICATIONS — DIMINUTION DES PRISES EN CHARGE",
    "RÉCÉPISSÉ — Je, soussigné, reconnais avoir reçu les matières portées au présent bon."
   ],
@@ -85,19 +75,14 @@
    "N° compte de la nomenclature"
   ],
   "colonnes": [
-   "Groupe",
-   "Cpt principal",
-   "Cpt secondaire",
-   "Cpt divisionnaire",
-   "Sous-compte"
-  ],
-  "mentions": [
    "Désignation des matières",
    "Spécification",
    "Nombre d'unités",
    "Nature de l'unité",
    "Prix unitaire",
-   "Montant",
+   "Montant"
+  ],
+  "mentions": [
    "CERTIFICATIONS — SORTIE PROVISOIRE",
    "RÉCÉPISSÉ — Je, soussigné, reconnais avoir reçu les matières portées au présent bon.",
    "Date de retour effective (à compléter au retour) :"
@@ -287,7 +272,7 @@
   "entete": false
  },
  "13": {
-  "titre": "",
+  "titre": "FICHE D'INVENTAIRE INDIVIDUEL CONTRADICTOIRE DES MATIÈRES DU 1er GROUPE CONFIÉES À UN DÉTENTEUR",
   "articles": "Art. 35b, 58c, 58d, 60g, 71a",
   "champs": [
    "Détenteur",
@@ -332,7 +317,7 @@
   "entete": true
  },
  "15": {
-  "titre": "",
+  "titre": "FICHE DE CONSOMMATION DES STOCKS DES MATIÈRES DU 2e GROUPE",
   "articles": "Art. 35c, 71c",
   "champs": [
    "Nom et fonction du détenteur",
@@ -487,7 +472,7 @@
   "entete": true
  },
  "22": {
-  "titre": "1. BALANCE GÉNÉRALE DES COMPTES",
+  "titre": "BALANCE GÉNÉRALE DES COMPTES",
   "articles": "Art. 14c, 56, 72a, 76c, 77c, 78a2",
   "champs": [],
   "colonnes": [
