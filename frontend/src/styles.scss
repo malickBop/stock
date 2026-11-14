@@ -1,0 +1,65 @@
+/* Charte institutionnelle GCM — MASAE : teintes vertes, sobriété, lisibilité. */
+:root {
+  --vert-900: #0b3d1c; --vert-800: #1b5e20; --vert-700: #2e7d32; --vert-600: #388e3c; --vert-100: #e8f5e9; --vert-50: #f3faf4;
+  --or: #f9a825; --rouge: #c62828; --orange: #ef6c00; --bleu: #1565c0; --gris-900: #212121; --gris-600: #616161; --gris-300: #d6dbd7;
+  --gris-100: #f5f7f5; --rayon: 6px; --ombre: 0 1px 3px rgba(0, 0, 0, .12);
+  font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; font-size: 14px; color: var(--gris-900);
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--gris-100); }
+a { color: var(--vert-700); }
+h1 { font-size: 1.4rem; color: var(--vert-800); margin: 0 0 .25rem; }
+h2 { font-size: 1.1rem; color: var(--vert-800); margin: 1.25rem 0 .5rem; }
+h3 { font-size: 1rem; margin: .75rem 0 .5rem; }
+.sous-titre { color: var(--gris-600); margin: 0 0 1rem; }
+.carte { background: #fff; border-radius: var(--rayon); box-shadow: var(--ombre); padding: 1rem; margin-bottom: 1rem; border-top: 3px solid var(--vert-700); }
+.grille { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+.grille-2 { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); }
+.ligne { display: flex; gap: .75rem; align-items: flex-end; flex-wrap: wrap; }
+.espace { flex: 1; }
+label.champ { display: flex; flex-direction: column; gap: .25rem; font-size: .8rem; color: var(--gris-600); font-weight: 600; min-width: 160px; }
+input, select, textarea { font: inherit; padding: .45rem .55rem; border: 1px solid var(--gris-300); border-radius: 4px; background: #fff; color: var(--gris-900); }
+input:focus, select:focus, textarea:focus { outline: 2px solid var(--vert-600); outline-offset: -1px; }
+button, .bouton {
+  font: inherit; font-weight: 600; padding: .45rem .9rem; border-radius: 4px; border: 1px solid var(--vert-700); background: var(--vert-700); color: #fff;
+  cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: .35rem; white-space: nowrap;
+}
+button:hover, .bouton:hover { background: var(--vert-800); }
+button:disabled { opacity: .5; cursor: not-allowed; }
+button.secondaire, .bouton.secondaire { background: #fff; color: var(--vert-800); }
+button.secondaire:hover { background: var(--vert-50); }
+button.danger { background: var(--rouge); border-color: var(--rouge); }
+button.petit { padding: .2rem .5rem; font-size: .8rem; }
+table.donnees { width: 100%; border-collapse: collapse; background: #fff; font-size: .85rem; }
+table.donnees th { background: var(--vert-800); color: #fff; text-align: left; padding: .5rem; font-weight: 600; position: sticky; top: 0; }
+table.donnees td { padding: .4rem .5rem; border-bottom: 1px solid var(--gris-300); vertical-align: top; }
+table.donnees tr:nth-child(even) td { background: var(--vert-50); }
+table.donnees tr.cliquable:hover td { background: var(--vert-100); cursor: pointer; }
+table.donnees td.num, table.donnees th.num { text-align: right; white-space: nowrap; }
+table.donnees tfoot td { font-weight: 700; background: var(--vert-100) !important; border-top: 2px solid var(--vert-700); }
+.table-defile { overflow: auto; max-height: 65vh; border-radius: var(--rayon); box-shadow: var(--ombre); }
+.badge { display: inline-block; padding: .1rem .5rem; border-radius: 10px; font-size: .75rem; font-weight: 600; background: var(--gris-300); color: var(--gris-900); }
+.badge.BROUILLON { background: #eceff1; } .badge.SIGNE_COMMISSION { background: #e3f2fd; color: var(--bleu); }
+.badge.EN_ATTENTE_VISA_EXTERNE { background: #fff3e0; color: var(--orange); } .badge.SCAN_IMPORTE { background: #ede7f6; color: #4527a0; }
+.badge.VALIDATION_FINALE, .badge.VALIDE, .badge.DANS_LES_DELAIS { background: var(--vert-100); color: var(--vert-800); }
+.badge.ARCHIVE, .badge.CLOTURE { background: #cfd8dc; } .badge.REJETE, .badge.ANNULE, .badge.EN_RETARD, .badge.CRITIQUE { background: #ffebee; color: var(--rouge); }
+.badge.EN_COURS, .badge.A_PREPARER, .badge.ALERTE { background: #fff8e1; color: #8d6e00; }
+.kpi { background: #fff; border-radius: var(--rayon); box-shadow: var(--ombre); padding: .9rem 1rem; border-left: 4px solid var(--vert-700); }
+.kpi .valeur { font-size: 1.45rem; font-weight: 700; color: var(--vert-800); }
+.kpi .libelle { font-size: .8rem; color: var(--gris-600); text-transform: uppercase; letter-spacing: .03em; }
+.kpi.alerte { border-left-color: var(--orange); } .kpi.critique { border-left-color: var(--rouge); }
+.alerte-ligne { padding: .5rem .75rem; border-left: 4px solid var(--orange); background: #fff8e1; margin-bottom: .4rem; border-radius: 3px; font-size: .85rem; }
+.alerte-ligne.CRITIQUE { border-color: var(--rouge); background: #ffebee; } .alerte-ligne.INFO { border-color: var(--bleu); background: #e3f2fd; }
+.vide { color: var(--gris-600); font-style: italic; padding: 1rem; text-align: center; }
+.onglets { display: flex; gap: .25rem; border-bottom: 2px solid var(--vert-700); margin-bottom: 1rem; flex-wrap: wrap; }
+.onglets a, .onglets button { padding: .5rem 1rem; text-decoration: none; color: var(--vert-800); background: #fff; border: 1px solid var(--gris-300);
+  border-bottom: none; border-radius: 4px 4px 0 0; font-weight: 600; }
+.onglets a.actif, .onglets button.actif { background: var(--vert-700); color: #fff; border-color: var(--vert-700); }
+.etapes { display: flex; gap: 0; margin: 1rem 0; flex-wrap: wrap; }
+.etape { flex: 1; min-width: 120px; text-align: center; padding: .5rem .25rem; font-size: .75rem; font-weight: 600; background: #eceff1; color: var(--gris-600);
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%, 10px 50%); }
+.etape.faite { background: var(--vert-600); color: #fff; } .etape.courante { background: var(--or); color: var(--gris-900); }
+.exigence { font-size: .85rem; margin: .2rem 0; } .exigence.ok::before { content: '✔ '; color: var(--vert-700); } .exigence.ko::before { content: '✘ '; color: var(--rouge); }
+.modale-fond { position: fixed; inset: 0; background: rgba(0, 0, 0, .4); display: flex; align-items: center; justify-content: center; z-index: 50; }
+.modale { background: #fff; border-radius: var(--rayon); padding: 1.25rem; width: min(560px, 94vw); max-height: 90vh; overflow: auto; border-top: 4px solid var(--vert-700); }
+@media (max-width: 720px) { .masquer-mobile { display: none; } label.champ { min-width: 100%; } }
