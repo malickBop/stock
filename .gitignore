@@ -1,0 +1,10 @@
+target/
+*.iml
+.idea/
+.vscode/
+node_modules/
+frontend/dist/
+frontend/.angular/
+data/
+*.log
+.env

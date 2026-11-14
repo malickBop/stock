@@ -1,0 +1,17 @@
+package sn.masae.gcm.domain.enums;
+
+/** Rôles applicatifs RBAC. */
+public enum Role {
+    ADMIN,
+    ORDONNATEUR_PRINCIPAL,
+    ORDONNATEUR_DELEGUE,
+    ORDONNATEUR_SECONDAIRE,
+    COMPTABLE_ORDRE,
+    COMPTABLE_PRINCIPAL,
+    COMPTABLE_SECONDAIRE,
+    MAGASINIER,
+    DETENTEUR,
+    MEMBRE_COMMISSION,
+    CONTROLE,
+    CONSULTATION
+}
