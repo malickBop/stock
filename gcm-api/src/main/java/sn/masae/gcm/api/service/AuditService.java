@@ -24,13 +24,18 @@ public class AuditService {
 
     @Transactional(propagation = Propagation.MANDATORY)
     public void tracer(String action, String entite, Long entiteId, String structureCode, String details) {
+        tracerAs(loginCourant(), action, entite, entiteId, structureCode, details);
+    }
+
+    @Transactional(propagation = Propagation.MANDATORY)
+    public void tracerAs(String login, String action, String entite, Long entiteId, String structureCode, String details) {
         AuditLog log = new AuditLog();
         log.setAction(action);
         log.setEntite(entite);
         log.setEntiteId(entiteId);
         log.setStructureCode(structureCode);
         log.setDetails(details);
-        log.setUtilisateurLogin(loginCourant());
+        log.setUtilisateurLogin(login);
         if (RequestContextHolder.getRequestAttributes() instanceof ServletRequestAttributes attrs) {
             log.setAdresseIp(attrs.getRequest().getRemoteAddr());
         }
