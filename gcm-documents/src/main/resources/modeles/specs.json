@@ -1,0 +1,627 @@
+{
+ "1": {
+  "titre": "PROCÈS-VERBAL DE RÉCEPTION",
+  "articles": "Art. 43a1, 43a2, 45c, 45f, 45g, 67",
+  "champs": [
+   "N° du PV",
+   "Date de réception",
+   "Nom et qualité du fournisseur",
+   "Référence facture/marché/BC",
+   "Nom et qualité des membres de la commission de réception",
+   "Visa du Contrôleur budgétaire ou du C.R.F",
+   "Section",
+   "Chapitre"
+  ],
+  "colonnes": [
+   "Désignation des matières",
+   "Nombre d'unités",
+   "Nature de l'unité",
+   "Prix unitaire",
+   "Montant",
+   "Observations"
+  ],
+  "mentions": [],
+  "entete": true
+ },
+ "2": {
+  "titre": "BON D'ENTRÉE DANS L'EXISTANT",
+  "articles": "Art. 43a, 43c, 50a, 68",
+  "champs": [
+   "N° du bon d'entrée",
+   "Année budgétaire",
+   "N° compte de la nomenclature"
+  ],
+  "colonnes": [
+   "Groupe",
+   "Cpt principal",
+   "Cpt secondaire",
+   "Cpt divisionnaire",
+   "Sous-compte"
+  ],
+  "mentions": [
+   "Désignation des matières",
+   "Spécification",
+   "Nombre d'unités",
+   "Nature des unités",
+   "Prix unitaire",
+   "Montant",
+   "CERTIFICATIONS — AUGMENTATION DES PRISES EN CHARGE"
+  ],
+  "entete": true
+ },
+ "3": {
+  "titre": "BON DE SORTIE DÉFINITIVE DE L'EXISTANT",
+  "articles": "Art. 55a, 55b1",
+  "champs": [
+   "N° du bon de sortie",
+   "Année budgétaire",
+   "N° compte de la nomenclature"
+  ],
+  "colonnes": [
+   "Groupe",
+   "Cpt principal",
+   "Cpt secondaire",
+   "Cpt divisionnaire",
+   "Sous-compte"
+  ],
+  "mentions": [
+   "Désignation des matières",
+   "Spécification",
+   "Nombre d'unités",
+   "Nature de l'unité",
+   "Prix unitaire",
+   "Montant",
+   "CERTIFICATIONS — DIMINUTION DES PRISES EN CHARGE",
+   "RÉCÉPISSÉ — Je, soussigné, reconnais avoir reçu les matières portées au présent bon."
+  ],
+  "entete": true
+ },
+ "4": {
+  "titre": "BON DE SORTIE PROVISOIRE",
+  "articles": "Art. 54c, 68",
+  "champs": [
+   "N° du bon de sortie provisoire",
+   "Année budgétaire",
+   "N° compte de la nomenclature"
+  ],
+  "colonnes": [
+   "Groupe",
+   "Cpt principal",
+   "Cpt secondaire",
+   "Cpt divisionnaire",
+   "Sous-compte"
+  ],
+  "mentions": [
+   "Désignation des matières",
+   "Spécification",
+   "Nombre d'unités",
+   "Nature de l'unité",
+   "Prix unitaire",
+   "Montant",
+   "CERTIFICATIONS — SORTIE PROVISOIRE",
+   "RÉCÉPISSÉ — Je, soussigné, reconnais avoir reçu les matières portées au présent bon.",
+   "Date de retour effective (à compléter au retour) :"
+  ],
+  "entete": true
+ },
+ "5": {
+  "titre": "PROCÈS-VERBAL DE RÉFORME DES MATIÈRES",
+  "articles": "Art. 57e, 57f, 57l, 68",
+  "champs": [
+   "N° du PV",
+   "Section",
+   "Chapitre"
+  ],
+  "colonnes": [
+   "N° compte nomenclature\n(Grp-Ppal-Sec-Div)",
+   "Désignation des matières",
+   "Qté à conserver/\ntransformer",
+   "P.U.",
+   "Qté à vendre",
+   "P.U.",
+   "Qté à démolir",
+   "P.U."
+  ],
+  "mentions": [
+   "Composition de la commission de réforme :",
+   "Nom et prénom",
+   "Qualité",
+   "Signature",
+   "Autres observations de la commission :",
+   "Visa du Contrôleur budgétaire ou du C.R.F :",
+   "Approbation de l'Autorité compétente :"
+  ],
+  "entete": true
+ },
+ "6": {
+  "titre": "PROCÈS-VERBAL DE VENTE / DESTRUCTION",
+  "articles": "Art. 57n, 57o, 68",
+  "champs": [
+   "N° du PV",
+   "Date",
+   "N° compte nomenclature"
+  ],
+  "colonnes": [
+   "Désignation des matières et des unités",
+   "Nbre d'unités",
+   "Prix réforme/unité",
+   "Valeur totale réformée",
+   "Nbre vendues",
+   "Prix vente/unité",
+   "Produit vente",
+   "Nbre détruites"
+  ],
+  "mentions": [
+   "Nombre d'unités proposées à la destruction :",
+   "Nombre vendues ou détruites :",
+   "ARRETE LE PRESENT PV REPRESENTANT UNE VALEUR DE ____________ FRANCS",
+   "Président de la commission de vente ou de destruction :",
+   "Autres membres de la commission :"
+  ],
+  "entete": true
+ },
+ "7": {
+  "titre": "BORDEREAU D'AFFECTATION",
+  "articles": "Art. 52a, 69",
+  "champs": [
+   "N° du bordereau",
+   "Magasinier-fichiste",
+   "Détenteur récepteur"
+  ],
+  "colonnes": [
+   "N° compte nomenclature",
+   "Code immatriculation",
+   "Désignation des matières",
+   "Nature des unités",
+   "Nombre d'unités",
+   "Prix unitaire"
+  ],
+  "mentions": [
+   "Le magasinier fichiste",
+   "Le détenteur (réceptionnaire)",
+   "Je, soussigné, reconnais avoir diminué mes prises en charge des matières portées au présent bordereau d'affectation.",
+   "Je, soussigné, reconnais avoir reçu les matières portées au présent bordereau d'affectation.",
+   "Signature : ____________________",
+   "Signature : ____________________",
+   "Vu et approuvé — L'Ordonnateur des matières : ____________________  Signature : ____________________"
+  ],
+  "entete": true
+ },
+ "8": {
+  "titre": "BORDEREAU DE MUTATION DES MATIÈRES",
+  "articles": "Art. 53d, 69",
+  "champs": [
+   "N° du bordereau",
+   "Détenteur A (cédant)",
+   "Détenteur B (récepteur)"
+  ],
+  "colonnes": [
+   "N° compte nomenclature",
+   "Code immatriculation",
+   "Désignation des matières",
+   "Nature des unités",
+   "Nombre d'unités",
+   "Prix unitaire"
+  ],
+  "mentions": [
+   "Détenteur A",
+   "Détenteur B",
+   "Je, soussigné, reconnais avoir monté les matières portées au présent bordereau au profit de Détenteur B.",
+   "Je, soussigné, reconnais avoir reçu les matières portées au présent bordereau, en provenance de Détenteur A.",
+   "Signature : ____________________",
+   "Signature : ____________________",
+   "Vu et approuvé — L'Ordonnateur des matières : ____________________  Signature : ____________________"
+  ],
+  "entete": true
+ },
+ "9": {
+  "titre": "FICHE DE STOCK",
+  "articles": "Art. 33b, 58g",
+  "champs": [],
+  "colonnes": [
+   "N° compte",
+   "Désignation de la matière",
+   "Qté entrée (cumul)",
+   "Montant entrée (cumul)",
+   "Qté sortie (cumul)",
+   "Montant sortie (cumul)",
+   "SOLDE quantité",
+   "SOLDE montant"
+  ],
+  "mentions": [],
+  "entete": false
+ },
+ "10": {
+  "titre": "FICHIER DES MATIÈRES TENU PAR LE MAGASINIER",
+  "articles": "Art. 33b",
+  "champs": [
+   "N° compte à afficher"
+  ],
+  "colonnes": [
+   "Date opération",
+   "N° bon",
+   "Désignation des matières",
+   "Entrée Qté",
+   "Entrée P.U.",
+   "Entrée Montant",
+   "Sortie Qté",
+   "Sortie P.U.",
+   "Sortie Montant",
+   "Pour mémoire sorties provisoires"
+  ],
+  "mentions": [],
+  "entete": false
+ },
+ "11": {
+  "titre": "LIVRE-JOURNAL DES MATIÈRES",
+  "articles": "Art. 14c, 58a, 58b, 58c, 70b, 76a, 78a2",
+  "champs": [],
+  "colonnes": [
+   "N° d'ordre",
+   "Date",
+   "N° compte",
+   "Désignation",
+   "Sens",
+   "Quantité",
+   "Montant",
+   "N° pièce"
+  ],
+  "mentions": [],
+  "entete": false
+ },
+ "12": {
+  "titre": "GRAND-LIVRE DES COMPTES",
+  "articles": "Art. 14c, 58a, 58b1, 58c, 70b, 76a2, 78a2",
+  "champs": [],
+  "colonnes": [
+   "N° compte",
+   "Désignation",
+   "Entrées (qté)",
+   "Sorties (qté)",
+   "Prix unitaire moyen",
+   "Existant (qté)",
+   "Montant existant",
+   "Date retour sorties provisoires"
+  ],
+  "mentions": [],
+  "entete": false
+ },
+ "13": {
+  "titre": "",
+  "articles": "Art. 35b, 58c, 58d, 60g, 71a",
+  "champs": [
+   "Détenteur",
+   "Fonction",
+   "Lieu d'affectation",
+   "Année budgétaire"
+  ],
+  "colonnes": [
+   "N° immatriculation",
+   "N° compte\nnomenclature",
+   "N° bon d'entrée",
+   "Désignation des matières",
+   "Nature unité",
+   "Date remise",
+   "Nbre unités remises",
+   "Date / Émargement reprise"
+  ],
+  "mentions": [
+   "FICHE D'INVENTAIRE INDIVIDUEL CONTRADICTOIRE DES MATIÈRES DU 1er GROUPE CONFIÉES À UN DÉTENTEUR",
+   "Le Comptable des matières : ____________________  Signature : ____________________",
+   "Signature du détenteur : ____________________"
+  ],
+  "entete": true
+ },
+ "14": {
+  "titre": "FICHE DE DÉTENTEUR DES MATIÈRES",
+  "articles": "Art. 34a, 34c, 71b",
+  "champs": [
+   "Nom et fonction du détenteur"
+  ],
+  "colonnes": [
+   "N° compte\nnomenclature",
+   "Désignation des matières",
+   "Entrées",
+   "Sorties\ndéfinitives",
+   "Prix unitaire",
+   "Existant",
+   "Date",
+   "Émargement / Observation"
+  ],
+  "mentions": [],
+  "entete": true
+ },
+ "15": {
+  "titre": "",
+  "articles": "Art. 35c, 71c",
+  "champs": [
+   "Nom et fonction du détenteur",
+   "Nom et fonction du comptable"
+  ],
+  "colonnes": [
+   "Date des opérations",
+   "Désignation 1",
+   "Désignation 2",
+   "Désignation 3",
+   "Émargement"
+  ],
+  "mentions": [
+   "Livré",
+   "Consommé",
+   "Livré",
+   "Consommé",
+   "Livré",
+   "Consommé",
+   "Totaux à reporter"
+  ],
+  "entete": true
+ },
+ "16": {
+  "titre": "FICHE MATRICULE DES PROPRIÉTÉS BÂTIES",
+  "articles": "Art. 71d",
+  "champs": [],
+  "colonnes": [
+   "N° immatriculation",
+   "N° compte\nnomenclature",
+   "Localisation",
+   "Description",
+   "Référence acte\nd'affectation",
+   "État d'inventaire",
+   "Amortissement /\nProvision",
+   "Valeur comptable nette"
+  ],
+  "mentions": [
+   "Occupant",
+   "Observation",
+   "L'ordonnateur des matières, soussigné, déclare conserver les matières citées ci-dessus dans ses prises en charge.",
+   "Nom, prénom, fonction : ____________________   Date : ____________   Signature : ____________________"
+  ],
+  "entete": true
+ },
+ "17": {
+  "titre": "FICHE MATRICULE DES PROPRIÉTÉS NON BÂTIES",
+  "articles": "Art. 71e",
+  "champs": [],
+  "colonnes": [
+   "N° immatriculation",
+   "N° compte\nnomenclature",
+   "Localisation",
+   "Superficie",
+   "Référence du\ntitre foncier",
+   "Référence acte\nd'affectation",
+   "Observation"
+  ],
+  "mentions": [
+   "Le comptable des matières, soussigné, déclare conserver les matières citées ci-dessus dans ses prises en charge.",
+   "Nom, prénom, fonction : ____________________   Date : ____________   Signature : ____________________"
+  ],
+  "entete": true
+ },
+ "18": {
+  "titre": "FICHE DES BÂTIMENTS PRIS EN BAIL",
+  "articles": "Art. 71f",
+  "champs": [],
+  "colonnes": [
+   "N° immatriculation",
+   "N° compte\nnomenclature",
+   "Localisation",
+   "Description",
+   "Référence acte\nd'affectation",
+   "État d'inventaire",
+   "Propriétaire / Occupant"
+  ],
+  "mentions": [
+   "Le comptable des matières, soussigné, déclare conserver les matières citées ci-dessus dans ses prises en charge.",
+   "Nom, prénom, fonction : ____________________   Date : ____________   Signature : ____________________"
+  ],
+  "entete": true
+ },
+ "19": {
+  "titre": "RELEVÉ RÉCAPITULATIF DES MATIÈRES",
+  "articles": "Art. 60e, 71h",
+  "champs": [
+   "À la date du"
+  ],
+  "colonnes": [
+   "N° compte",
+   "Désignation des matières",
+   "En attente d'affectation",
+   "En service",
+   "En sortie provisoire",
+   "TOTAL"
+  ],
+  "mentions": [
+   "Note : la colonne « En attente d'affectation » est ici fixée à 0 par défaut (approximation), faute de distinction automatique entre matières affectées à un détenteur et matières encore en magasin dans ce prototype. À ajuster manuellement si le magasinier-fichiste détient des stocks non encore affectés (modèle 9/10)."
+  ],
+  "entete": false
+ },
+ "20": {
+  "titre": "PROCÈS-VERBAL DE RECENSEMENT",
+  "articles": "Art. 27a, 48b, 48c, 60d, 60e, 60g, 71f, 71h, 72a, 77c",
+  "champs": [
+   "N° du PV",
+   "Date du recensement",
+   "Comptable sortant (le cas échéant)",
+   "Comptable entrant",
+   "Inspecteur vérificateur (éventuellement)",
+   "Inventaire physique effectué par la commission de recensement"
+  ],
+  "colonnes": [
+   "N° compte",
+   "Désignation des matières",
+   "Matières en\nattente d'affectation",
+   "Matières en\nservice",
+   "Matières en\nsortie provisoire",
+   "TOTAL\n(inventaire physique)",
+   "Existant théorique\n(modèle 19)",
+   "Écart"
+  ],
+  "mentions": [
+   "Avis du supérieur hiérarchique direct :",
+   "Conclusion de la commission ou du vérificateur :",
+   "Visa — Le Contrôleur budgétaire : ____________   L'Ordonnateur des matières : ____________   Le Comptable des matières : ____________"
+  ],
+  "entete": true
+ },
+ "21": {
+  "titre": "CERTIFICAT ADMINISTRATIF PORTANT AUTORISATION",
+  "articles": "Art. 43a4, 71i, 71j",
+  "champs": [],
+  "colonnes": [
+   "N° compte\nnomenclature",
+   "Désignation",
+   "Quantité",
+   "Montant"
+  ],
+  "mentions": [
+   "Motif de l'opération (changement de dénomination, dation, excédent, déficit, etc.) :",
+   "POSITION NOUVELLE DES MATIÈRES",
+   "N° compte\nnomenclature",
+   "Désignation",
+   "Quantité",
+   "Montant",
+   "Je, soussigné, ordonnateur des matières ou son délégué, certifie avoir autorisé les opérations suivantes : ____________________",
+   "L'Ordonnateur des matières : ____________________  Signature : ____________________",
+   "Le Contrôleur budgétaire : ____________________  Signature : ____________________"
+  ],
+  "entete": true
+ },
+ "22": {
+  "titre": "1. BALANCE GÉNÉRALE DES COMPTES",
+  "articles": "Art. 14c, 56, 72a, 76c, 77c, 78a2",
+  "champs": [],
+  "colonnes": [
+   "N° compte",
+   "Désignation des matières",
+   "Existant\ndébut gestion",
+   "Entrée en\ncours de gestion",
+   "Total\nentrées",
+   "Sorties\ndéfinitives",
+   "Matières en attente\nd'affectation",
+   "Matières\nen service",
+   "Matières en sortie\nprovisoire",
+   "TOTAL existant\nfin de gestion"
+  ],
+  "mentions": [
+   "TOTAL",
+   "L'Ordonnateur / Le Comptable : ____________________  Prénom et nom : ____________________  Signature : ____________________",
+   "Note : « Matières en service » est ici approximée par (existant fin − sorties provisoires en cours), faute de fiche détenteur consolidée par compte dans ce classeur Excel. « En attente d'affectation » = solde résiduel."
+  ],
+  "entete": false
+ },
+ "23": {
+  "titre": "BORDEREAU DE CENTRALISATION DES PROCÈS-VERBAUX DE RECENSEMENT DES MATIÈRES DE LA GESTION",
+  "articles": "Art. 14c, 72a, 78a3",
+  "champs": [
+   "Région, Commune, ou Établissement Public",
+   "b) Documents comptables",
+   "Quitus ou réserves (pour attribution)"
+  ],
+  "colonnes": [],
+  "mentions": [
+   "Nbre de\npièces",
+   "Qualité des comptables et documents centralisés",
+   "Observations",
+   "1 - Comptabilité des matières de : ____________________ (1 arrêté de nomination joint)",
+   "a) Prénom, nom et fonction du comptable",
+   "• 1 PV de recensement des matières",
+   "• Copie des bons d'entrée",
+   "• Copie des bons de sortie définitive",
+   "• Copies des bons de sortie provisoire",
+   "Le Comptable Principal des matières accuse réception du procès-verbal de recensement de la comptabilité des matières de ____________________ à la date du ____________ et certifie/émet des réserves sur la concordance des procès-verbaux de recensement centralisés avec mes propres écritures. Motif des réserves : ____________________",
+   "Fait à ____________________ le ____________   Signature : ____________________"
+  ],
+  "entete": true
+ },
+ "24": {
+  "titre": "COMPTE DE GESTION",
+  "articles": "Art. 26c, 66, 72a, 78a, 79d, 80a",
+  "champs": [
+   "Année (exercice)",
+   "Prénom et nom du comptable des matières",
+   "Fonctions",
+   "Date de prise de service",
+   "Total existant fin de gestion (cf. Balance générale)",
+   "Échéance de dépôt à la Cour des Comptes"
+  ],
+  "colonnes": [],
+  "mentions": [
+   "I. LISTE DES DOCUMENTS ET PIÈCES JOINTES",
+   "1. l'arrêté de nomination du comptable",
+   "2. Copie procuration donnée à des mandataires (s'il y a lieu)",
+   "3. Procès-verbal de passation de service (s'il y a lieu)",
+   "4. Balance générale des comptes",
+   "5. le bordereau de centralisation des procès-verbaux de recensement des matières des comptables secondaires (s'il y a lieu)",
+   "6. copie des bons d'entrées",
+   "7. copie des bons de sortie définitive",
+   "8. copie des bons de sortie provisoire",
+   "II. SYNTHÈSE — VOIR ONGLET Modèle_22_Balance_Générale",
+   "Rappel (art. 79.b) : amende de 50 000 FCFA maximum par mois de retard en cas de dépôt tardif à la Cour des Comptes.",
+   "Fait à ____________________ le ____________",
+   "Signé par le comptable principal des matières et éventuellement par tous les comptables principaux qui se sont succédé depuis le début de la gestion."
+  ],
+  "entete": false
+ },
+ "25": {
+  "titre": "COMPTE CENTRAL DES MATIÈRES DE L'ÉTAT",
+  "articles": "Art. 20, 24e, 25c-f, 66, 72, 72b, 78b, 79a",
+  "champs": [
+   "Année (exercice)"
+  ],
+  "colonnes": [
+   "Structure principale",
+   "Existant début\nde gestion",
+   "Entrées en cours\nde gestion",
+   "Sorties\ndéfinitives",
+   "Existant fin\nde gestion",
+   "Statut compte\nde gestion"
+  ],
+  "mentions": [
+   "À renseigner",
+   "À renseigner",
+   "À renseigner",
+   "À renseigner",
+   "À renseigner",
+   "À renseigner",
+   "À renseigner",
+   "À renseigner",
+   "À renseigner",
+   "À renseigner",
+   "TOTAL ÉTAT / MINISTÈRE",
+   "II. DOCUMENTS JOINTS",
+   "1. l'arrêté de nomination du comptable centralisateur",
+   "2. Copie procuration donnée à des mandataires (s'il y a lieu)",
+   "3. Procès-verbal de passation de service (s'il y a lieu)",
+   "4. l'état consolidé des balances générales fournies par les comptables principaux des matières",
+   "5. les bordereaux de centralisation des procès-verbaux de recensement des matières des comptables principaux",
+   "Échéance de dépôt à la Cour des Comptes :",
+   "Fait à ____________________ le ____________",
+   "Le Comptable centralisateur des matières : ____________________   Le Ministre chargé des finances : ____________________"
+  ],
+  "entete": false
+ },
+ "26": {
+  "titre": "COMPTE ADMINISTRATIF",
+  "articles": "Art. 14b, 14c, 25f, 79, 87",
+  "champs": [
+   "Année (exercice)",
+   "Ordonnateur des matières",
+   "Échéance de dépôt à la Cour des Comptes"
+  ],
+  "colonnes": [],
+  "mentions": [
+   "Composantes du compte administratif (art. 14c)",
+   "1. Journal d'enregistrement (livre-journal)",
+   "Voir onglet Modèle_11_Livre_Journal",
+   "2. Balance générale des comptes établie à partir du grand livre",
+   "Voir onglet Modèle_22_Balance_Générale",
+   "Établie par le comptable des matières",
+   "3. Bordereau de centralisation des PV d'inventaire",
+   "Voir onglet Modèle_23_Bordereau_Central",
+   "À compléter par les PV de recensement de l'exercice",
+   "Responsabilité (art. 17) : l'ordonnateur est personnellement responsable des mouvements qu'il a ordonnés.",
+   "Fait à ____________________ le ____________   L'Ordonnateur des matières : ____________________  Signature : ____________________"
+  ],
+  "entete": false
+ }
+}
