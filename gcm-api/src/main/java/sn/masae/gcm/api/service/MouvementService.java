@@ -40,10 +40,12 @@ public class MouvementService implements ImpactHandler {
     private final WorkflowService workflow;
     private final SecuriteService securite;
     private final AuditService audit;
+    private final SortieProvisoireService sortiesProvisoires;
 
     public MouvementService(MouvementRepository mouvements, BienRepository biens, DocumentReglementaireRepository documents,
                             ReferentielService referentiel, ActeurService acteurs, CommissionService commissions, StockService stock,
-                            @org.springframework.context.annotation.Lazy WorkflowService workflow, SecuriteService securite, AuditService audit) {
+                            @org.springframework.context.annotation.Lazy WorkflowService workflow, SecuriteService securite, AuditService audit,
+                            SortieProvisoireService sortiesProvisoires) {
         this.mouvements = mouvements;
         this.biens = biens;
         this.documents = documents;
@@ -54,6 +56,7 @@ public class MouvementService implements ImpactHandler {
         this.workflow = workflow;
         this.securite = securite;
         this.audit = audit;
+        this.sortiesProvisoires = sortiesProvisoires;
     }
 
     @Transactional(readOnly = true)
@@ -128,15 +131,23 @@ public class MouvementService implements ImpactHandler {
         audit.tracer("ANNULATION", "Mouvement", m.getId(), m.getStructure().getCode(), m.getNumero());
     }
 
-    /** Chaque ligne d'un retour doit porter sur un bien de la sortie provisoire d'origine, sans excéder la quantité sortie. */
+    /**
+     * Chaque ligne d'un retour doit porter sur un bien de la sortie provisoire d'origine, sans excéder le reste à retourner
+     * (quantité sortie moins les retours déjà saisis et non annulés).
+     */
     private void verifierRetour(Mouvement m) {
         Mouvement o = m.getMouvementOrigine();
+        Map<Long, BigDecimal> reste = sortiesProvisoires.reste(o, false);
+        Map<Long, BigDecimal> demande = new HashMap<>();
         for (LigneMouvement l : m.getLignes()) {
-            BigDecimal sorti = o.getLignes().stream()
-                    .filter(x -> x.getBien() != null && l.getBien() != null && x.getBien().getId().equals(l.getBien().getId()))
-                    .map(LigneMouvement::getQuantite).reduce(BigDecimal.ZERO, BigDecimal::add);
-            if (l.getQuantite().compareTo(sorti) > 0) {
-                throw new BusinessException(ErrorCode.VALIDATION, "Le retour excède la quantité sortie par " + o.getNumero() + " pour ce bien");
+            if (l.getBien() == null || !reste.containsKey(l.getBien().getId())) {
+                throw new BusinessException(ErrorCode.VALIDATION, "Le retour ne peut porter que sur les biens de la sortie provisoire " + o.getNumero());
+            }
+            Long id = l.getBien().getId();
+            BigDecimal total = demande.merge(id, l.getQuantite(), BigDecimal::add);
+            if (total.compareTo(reste.get(id)) > 0) {
+                throw new BusinessException(ErrorCode.VALIDATION, "Le retour de " + l.getBien().getNumeroInventaire() + " excède le reste à retourner sur "
+                        + o.getNumero() + " (" + Montants.quantite(reste.get(id)) + ")");
             }
         }
     }
@@ -270,7 +281,8 @@ public class MouvementService implements ImpactHandler {
             case SORTIE_DEFINITIVE -> EnumSet.of(SousTypeMouvement.CONSOMMATION, SousTypeMouvement.VENTE, SousTypeMouvement.DESTRUCTION,
                     SousTypeMouvement.CESSION, SousTypeMouvement.PERTE, SousTypeMouvement.VOL, SousTypeMouvement.TRANSFERT_EMIS,
                     SousTypeMouvement.MANQUANT_INVENTAIRE);
-            case SORTIE_PROVISOIRE -> EnumSet.of(SousTypeMouvement.PRET, SousTypeMouvement.REPARATION, SousTypeMouvement.EXPOSITION);
+            case SORTIE_PROVISOIRE -> EnumSet.of(SousTypeMouvement.PRET, SousTypeMouvement.REPARATION, SousTypeMouvement.EXPOSITION,
+                    SousTypeMouvement.LOCATION);
             case RETOUR -> EnumSet.of(SousTypeMouvement.RETOUR_PRET);
             case AFFECTATION -> EnumSet.of(SousTypeMouvement.AFFECTATION_DETENTEUR);
             case REPRISE -> EnumSet.of(SousTypeMouvement.REPRISE_DETENTEUR);

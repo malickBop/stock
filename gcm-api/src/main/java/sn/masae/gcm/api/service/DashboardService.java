@@ -35,10 +35,13 @@ public class DashboardService {
     private final CommissionRepository commissions;
     private final ReferentielService referentiel;
     private final SecuriteService securite;
+    private final SortieProvisoireService sortiesProvisoires;
 
     public DashboardService(StructureRepository structures, BienRepository biens, DocumentReglementaireRepository documents,
                             MouvementRepository mouvements, EcritureJournalRepository journal, RedditionRepository redditions,
-                            CommissionRepository commissions, ReferentielService referentiel, SecuriteService securite) {
+                            CommissionRepository commissions, ReferentielService referentiel, SecuriteService securite,
+                            SortieProvisoireService sortiesProvisoires) {
+        this.sortiesProvisoires = sortiesProvisoires;
         this.structures = structures;
         this.biens = biens;
         this.documents = documents;
@@ -62,7 +65,7 @@ public class DashboardService {
 
         List<Bien> bs = ids.isEmpty() ? List.of() : biens.findByStructureIdInOrderByNumeroInventaireAsc(ids);
         List<DocumentReglementaire> docs = ids.isEmpty() ? List.of() : documents.findByStructureIdInAndExerciceIdAndStatutIn(ids, e.getId(), EN_CIRCUIT);
-        List<Mouvement> sp = ids.isEmpty() ? List.of() : mouvements.findSortiesProvisoiresNonRetournees(ids);
+        List<Mouvement> sp = ids.isEmpty() ? List.of() : sortiesProvisoires.nonSoldees(ids);
         List<Bien> sousSeuil = ids.isEmpty() ? List.of() : biens.findSousSeuil(ids);
         List<EcritureJournal> ecritures = ids.isEmpty() ? List.of() : journal.findByStructureIdInAndExerciceIdOrderByStructureIdAscNumeroOrdreAsc(ids, e.getId());
 
@@ -109,7 +112,8 @@ public class DashboardService {
         for (Mouvement m : sp) {
             if (m.getDateRetourPrevue() != null && m.getDateRetourPrevue().isBefore(today)) {
                 alertes.add(new Alerte("SORTIE_PROVISOIRE", "CRITIQUE", "Sortie provisoire " + m.getNumero() + " non retournée (retour prévu le "
-                        + m.getDateRetourPrevue() + ")", m.getStructure().getCode(), m.getId(), "/mouvements/" + m.getId()));
+                        + m.getDateRetourPrevue().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")) + ")", m.getStructure().getCode(), m.getId(),
+                        "/sorties-provisoires"));
             }
         }
         for (Bien b : sousSeuil) {

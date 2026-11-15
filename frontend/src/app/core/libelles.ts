@@ -13,7 +13,7 @@ export const SOUS_TYPES: Record<string, string> = {
   ACHAT: 'Achat', DON: 'Don', LEGS: 'Legs', PRODUCTION: 'Production', TRANSFERT_RECU: 'Transfert reçu', EXCEDENT_INVENTAIRE: 'Excédent d\'inventaire',
   REPORT_A_NOUVEAU: 'Report à nouveau', CONSOMMATION: 'Consommation', VENTE: 'Vente', DESTRUCTION: 'Destruction', CESSION: 'Cession', PERTE: 'Perte',
   VOL: 'Vol', TRANSFERT_EMIS: 'Transfert émis', MANQUANT_INVENTAIRE: 'Manquant d\'inventaire', PRET: 'Prêt', REPARATION: 'Réparation',
-  EXPOSITION: 'Exposition', RETOUR_PRET: 'Retour', AFFECTATION_DETENTEUR: 'Affectation à un détenteur', REPRISE_DETENTEUR: 'Reprise au détenteur',
+  EXPOSITION: 'Exposition', LOCATION: 'Location', RETOUR_PRET: 'Retour', AFFECTATION_DETENTEUR: 'Affectation à un détenteur', REPRISE_DETENTEUR: 'Reprise au détenteur',
   MUTATION_INTERNE: 'Mutation'
 };
 
@@ -23,25 +23,25 @@ export interface Operation { cle: string; titre: string; modele: string; type: s
 export const MODULES: Record<string, { titre: string; operations: Operation[] }> = {
   entrees: {
     titre: 'Opérations d\'entrée', operations: [
-      { cle: 'achat', titre: 'Réception (achat)', modele: 'Modèle n°1 — PV de réception', type: 'ENTREE', sousTypes: ['ACHAT'], aBien: false },
-      { cle: 'don', titre: 'Don, legs, production', modele: 'Modèle n°2 — Ordre d\'entrée', type: 'ENTREE', sousTypes: ['DON', 'LEGS', 'PRODUCTION'], aBien: false },
-      { cle: 'transfert', titre: 'Transfert reçu', modele: 'Modèle n°2 — Ordre d\'entrée', type: 'ENTREE', sousTypes: ['TRANSFERT_RECU'], aBien: false }
+      { cle: 'achat', titre: 'Réception (achat)', modele: 'Modèle n°1 — Procès-verbal de réception', type: 'ENTREE', sousTypes: ['ACHAT'], aBien: false },
+      { cle: 'don', titre: 'Don, legs, production', modele: 'Modèle n°2 — Bon d\'entrée dans l\'existant', type: 'ENTREE', sousTypes: ['DON', 'LEGS', 'PRODUCTION'], aBien: false },
+      { cle: 'transfert', titre: 'Transfert reçu', modele: 'Modèle n°2 — Bon d\'entrée dans l\'existant', type: 'ENTREE', sousTypes: ['TRANSFERT_RECU'], aBien: false }
     ]
   },
   internes: {
     titre: 'Mouvements internes', operations: [
-      { cle: 'affectation', titre: 'Affectation', modele: 'Modèle n°3 — Bon d\'affectation', type: 'AFFECTATION', sousTypes: ['AFFECTATION_DETENTEUR'], aBien: true },
-      { cle: 'reprise', titre: 'Reprise', modele: 'Modèle n°4 — Bon de reprise', type: 'REPRISE', sousTypes: ['REPRISE_DETENTEUR'], aBien: true },
-      { cle: 'mutation', titre: 'Mutation', modele: 'Modèle n°6 — Bon de mutation', type: 'MUTATION', sousTypes: ['MUTATION_INTERNE'], aBien: true }
+      { cle: 'affectation', titre: 'Affectation', modele: 'Modèle n°7 — Bordereau d\'affectation', type: 'AFFECTATION', sousTypes: ['AFFECTATION_DETENTEUR'], aBien: true },
+      { cle: 'reprise', titre: 'Reprise', modele: 'Modèle n°7 — Bordereau d\'affectation (reprise)', type: 'REPRISE', sousTypes: ['REPRISE_DETENTEUR'], aBien: true },
+      { cle: 'mutation', titre: 'Mutation', modele: 'Modèle n°8 — Bordereau de mutation des matières', type: 'MUTATION', sousTypes: ['MUTATION_INTERNE'], aBien: true }
     ]
   },
   sorties: {
     titre: 'Opérations de sortie', operations: [
-      { cle: 'definitive', titre: 'Sortie définitive', modele: 'Modèle n°5 — Ordre de sortie', type: 'SORTIE_DEFINITIVE',
+      { cle: 'definitive', titre: 'Sortie définitive', modele: 'Modèle n°3 — Bon de sortie définitive de l\'existant', type: 'SORTIE_DEFINITIVE',
         sousTypes: ['CONSOMMATION', 'CESSION', 'TRANSFERT_EMIS', 'PERTE', 'VOL'], aBien: true },
-      { cle: 'provisoire', titre: 'Sortie provisoire', modele: 'Modèle n°7 — Bon de sortie provisoire', type: 'SORTIE_PROVISOIRE',
-        sousTypes: ['PRET', 'REPARATION', 'EXPOSITION'], aBien: true },
-      { cle: 'retour', titre: 'Retour de sortie provisoire', modele: 'Modèle n°8 — Bon de retour', type: 'RETOUR', sousTypes: ['RETOUR_PRET'], aBien: true }
+      { cle: 'provisoire', titre: 'Sortie provisoire', modele: 'Modèle n°4 — Bon de sortie provisoire', type: 'SORTIE_PROVISOIRE',
+        sousTypes: ['PRET', 'REPARATION', 'EXPOSITION', 'LOCATION'], aBien: true },
+      { cle: 'retour', titre: 'Retour de sortie provisoire', modele: 'Réintégration rattachée au bon de sortie provisoire (modèle n°4), validée par le comptable', type: 'RETOUR', sousTypes: ['RETOUR_PRET'], aBien: true }
     ]
   }
 };
@@ -80,6 +80,10 @@ export const TYPES_REDDITION: Record<string, string> = {
   COMPTE_GESTION: 'Compte de gestion (Modèle n°23)', COMPTE_CENTRAL: 'Compte central (Modèle n°24)', COMPTE_ADMINISTRATIF: 'Compte administratif (Modèle n°26)',
   BORDEREAU_CENTRALISATION: 'Bordereau de centralisation (Modèle n°25)'
 };
+export const ETATS_SORTIE_PROVISOIRE: Record<string, string> = {
+  EN_COURS: 'En cours', PARTIELLEMENT_RETOURNEE: 'Partiellement retournée', EN_RETARD: 'En retard', SOLDEE: 'Soldée'
+};
+
 export const STATUTS_OPERATION: Record<string, string> = {
   BROUILLON: 'Brouillon', EN_COURS: 'En cours', VALIDE: 'Validé', CLOTURE: 'Clôturé', ANNULE: 'Annulé'
 };

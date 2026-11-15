@@ -41,9 +41,9 @@ table.donnees tfoot td { font-weight: 700; background: var(--vert-100) !importan
 .badge { display: inline-block; padding: .1rem .5rem; border-radius: 10px; font-size: .75rem; font-weight: 600; background: var(--gris-300); color: var(--gris-900); }
 .badge.BROUILLON { background: #eceff1; } .badge.SIGNE_COMMISSION { background: #e3f2fd; color: var(--bleu); }
 .badge.EN_ATTENTE_VISA_EXTERNE { background: #fff3e0; color: var(--orange); } .badge.SCAN_IMPORTE { background: #ede7f6; color: #4527a0; }
-.badge.VALIDATION_FINALE, .badge.VALIDE, .badge.DANS_LES_DELAIS { background: var(--vert-100); color: var(--vert-800); }
+.badge.VALIDATION_FINALE, .badge.VALIDE, .badge.DANS_LES_DELAIS, .badge.SOLDEE { background: var(--vert-100); color: var(--vert-800); }
 .badge.ARCHIVE, .badge.CLOTURE { background: #cfd8dc; } .badge.REJETE, .badge.ANNULE, .badge.EN_RETARD, .badge.CRITIQUE { background: #ffebee; color: var(--rouge); }
-.badge.EN_COURS, .badge.A_PREPARER, .badge.ALERTE { background: #fff8e1; color: #8d6e00; }
+.badge.EN_COURS, .badge.A_PREPARER, .badge.ALERTE, .badge.PARTIELLEMENT_RETOURNEE { background: #fff8e1; color: #8d6e00; }
 .kpi { background: #fff; border-radius: var(--rayon); box-shadow: var(--ombre); padding: .9rem 1rem; border-left: 4px solid var(--vert-700); }
 .kpi .valeur { font-size: 1.45rem; font-weight: 700; color: var(--vert-800); }
 .kpi .libelle { font-size: .8rem; color: var(--gris-600); text-transform: uppercase; letter-spacing: .03em; }

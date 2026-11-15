@@ -85,7 +85,8 @@ export class ShellComponent {
     {
       titre: 'Opérations', entrees: [
         { lien: '/operations/entrees', libelle: 'Opérations d\'entrée' }, { lien: '/operations/internes', libelle: 'Mouvements internes' },
-        { lien: '/operations/sorties', libelle: 'Opérations de sortie' }, { lien: '/autres/recensements', libelle: 'Autres opérations' },
+        { lien: '/operations/sorties', libelle: 'Opérations de sortie' },
+        { lien: '/sorties-provisoires', libelle: 'Sorties provisoires en cours' }, { lien: '/autres/recensements', libelle: 'Autres opérations' },
         { lien: '/existant', libelle: 'Existant (biens)' }
       ]
     },

@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import sn.masae.gcm.api.dto.MouvementDtos.*;
 import sn.masae.gcm.api.security.SecuriteService;
 import sn.masae.gcm.api.service.MouvementService;
+import sn.masae.gcm.api.service.SortieProvisoireService;
 import sn.masae.gcm.common.exception.NotFoundException;
 import sn.masae.gcm.domain.entity.Bien;
 import sn.masae.gcm.domain.enums.Role;
@@ -21,8 +22,11 @@ public class MouvementController {
     private final MouvementService mouvements;
     private final BienRepository biens;
     private final SecuriteService securite;
+    private final SortieProvisoireService sortiesProvisoires;
 
-    public MouvementController(MouvementService mouvements, BienRepository biens, SecuriteService securite) {
+    public MouvementController(MouvementService mouvements, BienRepository biens, SecuriteService securite,
+                               SortieProvisoireService sortiesProvisoires) {
+        this.sortiesProvisoires = sortiesProvisoires;
         this.mouvements = mouvements;
         this.biens = biens;
         this.securite = securite;
@@ -77,6 +81,12 @@ public class MouvementController {
     @PostMapping("/mouvements/{id}/valider")
     public MouvementDto validerDirect(@PathVariable Long id) {
         return mouvements.validerDirect(id);
+    }
+
+    /** Suivi des sorties provisoires ; etat = EN_COURS, PARTIELLEMENT_RETOURNEE, EN_RETARD, SOLDEE ou OUVERTES (non soldées). */
+    @GetMapping("/sorties-provisoires")
+    public List<SortieProvisoireDto> sortiesProvisoires(@RequestParam(required = false) Long structureId, @RequestParam(required = false) String etat) {
+        return sortiesProvisoires.suivi(structureId, etat);
     }
 
     @PostMapping("/mouvements/{id}/annuler")

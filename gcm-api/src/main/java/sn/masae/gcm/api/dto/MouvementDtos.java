@@ -44,6 +44,16 @@ public final class MouvementDtos {
                                    @NotEmpty List<@Valid LigneRequest> lignes) {
     }
 
+    public record LigneSuiviDto(Long bienId, String numeroInventaire, String designation, String natureUnite, BigDecimal prixUnitaire,
+                                BigDecimal qteSortie, BigDecimal qteRetournee, BigDecimal reste) {
+    }
+
+    /** Suivi d'une sortie provisoire : état EN_COURS, PARTIELLEMENT_RETOURNEE, EN_RETARD ou SOLDEE. */
+    public record SortieProvisoireDto(Long id, String numero, Long structureId, String structureCode, SousTypeMouvement sousType,
+                                      String receptionnaire, LocalDate dateMouvement, LocalDate dateRetourPrevue, long joursRetard, String etat,
+                                      BigDecimal montantTotal, Long retourEnAttenteId, List<LigneSuiviDto> lignes) {
+    }
+
     public record LigneDto(Long id, Long bienId, String numeroInventaire, String compte, String designation, BigDecimal quantite,
                            String natureUnite, BigDecimal prixUnitaire, BigDecimal montant, EtatBien etat, String observation) {
         public static LigneDto of(LigneMouvement l) {

@@ -37,6 +37,14 @@ export interface Mouvement {
   receptionnaire?: string; dateRetourPrevue?: string; mouvementOrigineId?: number; montantTotal: number; observations?: string; documentId?: number;
   statutDocument?: string; lignes: LigneMouvement[];
 }
+export interface LigneSuivi {
+  bienId: number; numeroInventaire: string; designation: string; natureUnite?: string; prixUnitaire: number;
+  qteSortie: number; qteRetournee: number; reste: number;
+}
+export interface SortieProvisoire {
+  id: number; numero: string; structureId: number; structureCode: string; sousType: string; receptionnaire: string; dateMouvement: string;
+  dateRetourPrevue: string; joursRetard: number; etat: string; montantTotal: number; retourEnAttenteId?: number; lignes: LigneSuivi[];
+}
 export interface Signature { id: number; roleSignature: string; signataireNom: string; dateSignature: string; }
 export interface Visa { id: number; typeVisa: string; autorite?: string; referenceVisa?: string; dateVisa: string; pieceJointeId?: number; }
 export interface Piece { id: number; typePiece: string; nomFichier: string; contentType: string; taille: number; sha256: string; dateDepot: string; deposePar: string; }

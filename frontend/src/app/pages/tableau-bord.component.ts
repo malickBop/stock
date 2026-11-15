@@ -42,7 +42,7 @@ import { ReferentielStore } from '../core/referentiel.store';
         <div class="libelle">Scans à importer</div><div class="valeur">{{ d.enAttenteScan }}</div></a>
       <a class="kpi" [class.alerte]="d.enAttenteValidation" routerLink="/circuits" [queryParams]="{statut: 'SCAN_IMPORTE'}">
         <div class="libelle">En attente de validation finale</div><div class="valeur">{{ d.enAttenteValidation }}</div></a>
-      <div class="kpi" [class.alerte]="d.sortiesProvisoiresEnCours"><div class="libelle">Sorties provisoires en cours</div><div class="valeur">{{ d.sortiesProvisoiresEnCours }}</div></div>
+      <a class="kpi" [class.alerte]="d.sortiesProvisoiresEnCours" routerLink="/sorties-provisoires"><div class="libelle">Sorties provisoires en cours</div><div class="valeur">{{ d.sortiesProvisoiresEnCours }}</div></a>
       <a class="kpi" [class.alerte]="d.biensSousSeuil" routerLink="/existant"><div class="libelle">Stocks sous le seuil d'alerte</div><div class="valeur">{{ d.biensSousSeuil }}</div></a>
       <div class="kpi" [class.critique]="d.statutEcheance === 'EN_RETARD'" [class.alerte]="d.statutEcheance === 'A_PREPARER'">
         <div class="libelle">Compte de gestion — échéance {{ d.echeanceReddition | dateFr }}</div>

@@ -3,16 +3,16 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ApiService } from '../core/api.service';
 import { AuthService } from '../core/auth.service';
-import { FcfaPipe, LibellePipe, QtePipe } from '../core/format.pipes';
+import { DateFrPipe, FcfaPipe, LibellePipe, QtePipe } from '../core/format.pipes';
 import { ETATS_BIEN, ETATS_BIEN_LIB, MODULES, SOUS_TYPES } from '../core/libelles';
-import { Bien, LigneMouvement, Mouvement } from '../core/models';
+import { Bien, LigneMouvement, Mouvement, SortieProvisoire } from '../core/models';
 import { NotificationService } from '../core/notification.service';
 import { ReferentielStore } from '../core/referentiel.store';
 
 @Component({
   selector: 'app-mouvement-form',
   standalone: true,
-  imports: [FormsModule, RouterLink, FcfaPipe, QtePipe, LibellePipe],
+  imports: [FormsModule, RouterLink, FcfaPipe, QtePipe, LibellePipe, DateFrPipe],
   template: `
   @if (op(); as o) {
     <a [routerLink]="['/operations', module()]">← {{ titreModule() }}</a>
@@ -36,6 +36,11 @@ import { ReferentielStore } from '../core/referentiel.store';
         @if (o.type === 'SORTIE_PROVISOIRE') {
           <label class="champ">Réceptionnaire <input name="rc" [(ngModel)]="receptionnaire"></label>
           <label class="champ">Retour prévu le <input type="date" name="rp" [(ngModel)]="dateRetourPrevue"></label> }
+        @if (o.type === 'RETOUR') {
+          <label class="champ espace">Sortie provisoire d'origine <select name="mo" [(ngModel)]="mouvementOrigineId" (ngModelChange)="choisirOrigine()" required>
+            <option [ngValue]="null">— choisir —</option>
+            @for (s of sortiesOuvertes(); track s.id) { <option [ngValue]="s.id">{{ s.numero }} — {{ s.structureCode }} — {{ s.receptionnaire }} (retour prévu le {{ s.dateRetourPrevue | dateFr }})</option> }
+          </select></label> }
       </div>
       <h3>Désignation des matières</h3>
       <div class="table-defile"><table class="donnees">
@@ -75,6 +80,8 @@ export class MouvementFormComponent {
   ref = inject(ReferentielStore);
   module = input.required<string>();
   operation = input.required<string>();
+  /** Sortie provisoire à solder, transmise par l'écran de suivi (?origine=). */
+  origine = input<string>();
   op = computed(() => MODULES[this.module()]?.operations.find(o => o.cle === this.operation()));
   titreModule = computed(() => MODULES[this.module()]?.titre);
   sousTypes = SOUS_TYPES; etats = ETATS_BIEN; etatsLib = ETATS_BIEN_LIB;
@@ -85,12 +92,20 @@ export class MouvementFormComponent {
   dateRetourPrevue: string | null = null;
   structureDestinationId: number | null = null;
   detenteurDestinationId: number | null = null;
+  mouvementOrigineId: number | null = null;
+  sortiesOuvertes = signal<SortieProvisoire[]>([]);
   lignes = signal<LigneMouvement[]>([this.vide()]);
   biens = signal<Bien[]>([]);
   enCours = signal(false);
 
   constructor() {
-    effect(() => { const o = this.op(); if (o) { this.sousType = o.sousTypes[0]; if (o.aBien) this.chargerBiens(); } });
+    effect(() => {
+      const o = this.op();
+      if (!o) return;
+      this.sousType = o.sousTypes[0];
+      if (o.aBien) this.chargerBiens();
+      if (o.type === 'RETOUR') this.chargerOrigines(this.origine());
+    });
   }
 
   total() { return this.lignes().reduce((t, l) => t + (l.quantite || 0) * (l.prixUnitaire || 0), 0); }
@@ -102,6 +117,21 @@ export class MouvementFormComponent {
     const b = this.biens().find(x => x.id === l.bienId);
     if (b) { l.designation = b.designation; l.prixUnitaire = b.prixUnitaire; l.compteId = b.compteId; }
   }
+  chargerOrigines(preselection?: string) {
+    this.api.get<SortieProvisoire[]>('/sorties-provisoires', { etat: 'OUVERTES' }).subscribe(s => {
+      this.sortiesOuvertes.set(s.filter(x => !x.retourEnAttenteId));
+      if (preselection && this.sortiesOuvertes().some(x => x.id === +preselection)) { this.mouvementOrigineId = +preselection; this.choisirOrigine(); }
+    });
+  }
+  /** Pré-remplit le retour avec le reste à retourner de chaque bien de la sortie d'origine. */
+  choisirOrigine() {
+    const s = this.sortiesOuvertes().find(x => x.id === this.mouvementOrigineId);
+    if (!s) return;
+    this.structureId = s.structureId;
+    this.chargerBiens();
+    this.lignes.set(s.lignes.filter(l => l.reste > 0).map(l => ({ bienId: l.bienId, compteId: null, designation: l.designation,
+      natureUnite: l.natureUnite, quantite: l.reste, prixUnitaire: l.prixUnitaire })));
+  }
   choisirCompte(l: LigneMouvement) { const c = this.ref.comptes().find(x => x.id === l.compteId); if (c && !l.natureUnite) l.natureUnite = c.natureUnite; }
 
   enregistrer() {
@@ -110,7 +140,8 @@ export class MouvementFormComponent {
     this.api.post<Mouvement>('/mouvements', {
       structureId: this.structureId, typeMouvement: o.type, sousType: this.sousType, dateMouvement: this.date, referencePiece: this.referencePiece,
       tiers: this.tiers, structureDestinationId: this.structureDestinationId, detenteurDestinationId: this.detenteurDestinationId,
-      receptionnaire: this.receptionnaire, dateRetourPrevue: this.dateRetourPrevue, observations: this.observations, lignes: this.lignes()
+      receptionnaire: this.receptionnaire, dateRetourPrevue: this.dateRetourPrevue,
+      mouvementOrigineId: this.mouvementOrigineId, observations: this.observations, lignes: this.lignes()
     }).subscribe({
       next: m => { this.notif.succes(`Opération ${m.numero} enregistrée — pièce générée en brouillon`); this.router.navigate(['/mouvements', m.id]); },
       error: () => this.enCours.set(false)

@@ -35,6 +35,18 @@ Règles appliquées :
 - une sortie ne peut excéder la quantité disponible ; une **sortie provisoire** ne diminue pas l'existant comptable ;
 - aucune saisie n'est possible sur un exercice clôturé.
 
+### Sorties provisoires et retours
+
+Une **sortie provisoire** (prêt, location, réparation, exposition — art. 54) exige un réceptionnaire et une date de retour prévue. Elle suit le circuit du **modèle n°4** (signatures du comptable et de l'ordonnateur, visa du réceptionnaire, scan) ; à la validation, la quantité passe en « sortie provisoire » sans diminuer l'existant.
+
+L'écran **Sorties provisoires en cours** (menu Opérations, ou indicateur du tableau de bord) liste pour chaque sortie : réceptionnaire, date de retour prévue, jours de retard, et par bien les quantités sorties, retournées et restant à retourner. Filtres : non soldées, en cours, partiellement retournée, en retard, soldée.
+
+1. Cliquez **Enregistrer le retour** : le formulaire est pré-rempli avec le reste à retourner ; réduisez les quantités pour un retour partiel.
+2. Le comptable ouvre le retour et clique **Valider le retour** : les biens sont réintégrés en attente d'affectation.
+3. La sortie est **soldée** quand tous ses biens sont revenus ; elle disparaît alors des alertes.
+
+Un retour ne peut porter que sur les biens de la sortie d'origine et ne peut excéder le reste à retourner (les retours en attente de validation sont déduits). Une sortie dont la date de retour est dépassée déclenche une alerte critique.
+
 ## 4. Circuit de validation hybride
 
 Ouvrez la pièce depuis **Circuits de validation** ou depuis l'opération. Le bandeau d'étapes indique l'état et l'encadré **Conditions de passage** liste ce qui reste à faire.

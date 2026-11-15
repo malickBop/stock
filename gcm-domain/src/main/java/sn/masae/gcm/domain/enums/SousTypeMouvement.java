@@ -20,6 +20,7 @@ public enum SousTypeMouvement {
     PRET,
     REPARATION,
     EXPOSITION,
+    LOCATION,
     RETOUR_PRET,
     AFFECTATION_DETENTEUR,
     REPRISE_DETENTEUR,

@@ -158,6 +158,52 @@ class ParcoursCompletIntegrationTest {
 
     @Test
     @Order(6)
+    void sortieProvisoireRetoursPartielsEtSolde() throws Exception {
+        String c = token("comptable");
+        String o = token("ordonnateur");
+        long bien = lire("/api/biens?structureId=1", c).get(0).path("id").asLong();
+        JsonNode sp = send(post("/api/mouvements"), c, """
+                {"structureId":1,"typeMouvement":"SORTIE_PROVISOIRE","sousType":"LOCATION","dateMouvement":"%s","receptionnaire":"Atelier SA",
+                 "dateRetourPrevue":"%s","lignes":[{"bienId":%d,"quantite":3}]}""".formatted(LocalDate.now(), LocalDate.now().plusDays(30), bien));
+        String doc = "/api/documents/" + sp.path("documentId").asLong();
+        send(post(doc + "/signatures"), c, "{\"roleSignature\":\"COMPTABLE\"}");
+        send(post(doc + "/signatures"), o, "{\"roleSignature\":\"ORDONNATEUR\"}");
+        send(post(doc + "/transmettre"), c, null);
+        mvc.perform(multipart(doc + "/visas").file(pdf()).param("typeVisa", "RECEPTIONNAIRE").param("autorite", "Atelier SA")
+                .param("dateVisa", LocalDate.now().toString()).header("Authorization", c)).andExpect(status().isOk());
+        mvc.perform(multipart(doc + "/scan").file(pdf()).header("Authorization", c)).andExpect(status().isOk());
+        send(post(doc + "/valider"), c, null);
+
+        JsonNode suivi = lire("/api/sorties-provisoires?structureId=1", c).get(0);
+        assertThat(suivi.path("etat").asText()).isEqualTo("EN_COURS");
+        assertThat(suivi.path("lignes").get(0).path("reste").decimalValue()).isEqualByComparingTo("3");
+        assertThat(lire("/api/dashboard?structureId=1", c).path("sortiesProvisoiresEnCours").asLong()).isEqualTo(1);
+
+        String retour = """
+                {"structureId":1,"typeMouvement":"RETOUR","sousType":"RETOUR_PRET","dateMouvement":"%s","mouvementOrigineId":%d,
+                 "lignes":[{"bienId":%d,"quantite":%d}]}""";
+        long r1 = send(post("/api/mouvements"), c, retour.formatted(LocalDate.now(), sp.path("id").asLong(), bien, 1)).path("id").asLong();
+        // Le retour en attente de validation est déduit du reste : 3 unités ne peuvent plus être retournées.
+        mvc.perform(post("/api/mouvements").header("Authorization", c).contentType(MediaType.APPLICATION_JSON)
+                .content(retour.formatted(LocalDate.now(), sp.path("id").asLong(), bien, 3))).andExpect(status().isBadRequest());
+        send(post("/api/mouvements/" + r1 + "/valider"), c, null);
+        suivi = lire("/api/sorties-provisoires?structureId=1", c).get(0);
+        assertThat(suivi.path("etat").asText()).isEqualTo("PARTIELLEMENT_RETOURNEE");
+        assertThat(suivi.path("lignes").get(0).path("reste").decimalValue()).isEqualByComparingTo("2");
+        assertThat(lire("/api/dashboard?structureId=1", c).path("sortiesProvisoiresEnCours").asLong()).isEqualTo(1);
+
+        long r2 = send(post("/api/mouvements"), c, retour.formatted(LocalDate.now(), sp.path("id").asLong(), bien, 2)).path("id").asLong();
+        send(post("/api/mouvements/" + r2 + "/valider"), c, null);
+        assertThat(lire("/api/sorties-provisoires?structureId=1&etat=OUVERTES", c)).isEmpty();
+        assertThat(lire("/api/sorties-provisoires?structureId=1&etat=SOLDEE", c)).hasSize(1);
+        assertThat(lire("/api/dashboard?structureId=1", c).path("sortiesProvisoiresEnCours").asLong()).isZero();
+        JsonNode b = lire("/api/biens/" + bien, c);
+        assertThat(b.path("qteSortieProvisoire").decimalValue()).isEqualByComparingTo("0");
+        assertThat(b.path("existant").decimalValue()).isEqualByComparingTo("5");
+    }
+
+    @Test
+    @Order(7)
     void preparationDuCompteDeGestion() throws Exception {
         String c = token("comptable");
         JsonNode r = send(post("/api/redditions?structureId=1&type=COMPTE_GESTION"), c, null);

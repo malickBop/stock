@@ -11,6 +11,7 @@ export const routes: Routes = [
       { path: 'operations/:module', loadComponent: () => import('./pages/operations.component').then(m => m.OperationsComponent) },
       { path: 'operations/:module/:operation/nouveau', loadComponent: () => import('./pages/mouvement-form.component').then(m => m.MouvementFormComponent) },
       { path: 'mouvements/:id', loadComponent: () => import('./pages/mouvement-detail.component').then(m => m.MouvementDetailComponent) },
+      { path: 'sorties-provisoires', loadComponent: () => import('./pages/sorties-provisoires.component').then(m => m.SortiesProvisoiresComponent) },
       { path: 'circuits', loadComponent: () => import('./pages/circuits.component').then(m => m.CircuitsComponent) },
       { path: 'documents/:id', loadComponent: () => import('./pages/document-detail.component').then(m => m.DocumentDetailComponent) },
       { path: 'existant', loadComponent: () => import('./pages/biens.component').then(m => m.BiensComponent) },
