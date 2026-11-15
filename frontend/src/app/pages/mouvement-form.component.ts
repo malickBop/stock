@@ -16,7 +16,7 @@ import { ReferentielStore } from '../core/referentiel.store';
   template: `
   @if (op(); as o) {
     <a [routerLink]="['/operations', module()]">← {{ titreModule() }}</a>
-    <h1>{{ o.titre }}</h1><p class="sous-titre">{{ o.modele }} — la pièce est générée en brouillon puis suit le circuit de validation hybride.</p>
+    <h1>{{ o.titre }}</h1><p class="sous-titre">{{ o.modele }}{{ o.type === 'RETOUR' ? '.' : ' — la pièce est générée en brouillon puis suit le circuit de validation hybride.' }}</p>
     <form class="carte" (ngSubmit)="enregistrer()">
       <div class="ligne">
         <label class="champ">Structure <select name="s" [(ngModel)]="structureId" (ngModelChange)="chargerBiens()" required>
@@ -67,7 +67,7 @@ import { ReferentielStore } from '../core/referentiel.store';
       <div class="ligne" style="margin-top:.75rem">
         <button type="button" class="secondaire" (click)="ajouter()">+ Ajouter une ligne</button>
         <label class="champ espace">Observations <input name="obs" [(ngModel)]="observations"></label>
-        <button type="submit" [disabled]="enCours()">Enregistrer et générer la pièce</button>
+        <button type="submit" [disabled]="enCours()">{{ o.type === 'RETOUR' ? 'Enregistrer le retour' : 'Enregistrer et générer la pièce' }}</button>
       </div>
       @if (o.type === 'ENTREE') { <p class="sous-titre">Au-delà de 600 000 FCFA (services centraux) ou 300 000 FCFA (services déconcentrés), la réception est obligatoirement prononcée par la commission (art. 43).</p> }
     </form>
@@ -143,7 +143,9 @@ export class MouvementFormComponent {
       receptionnaire: this.receptionnaire, dateRetourPrevue: this.dateRetourPrevue,
       mouvementOrigineId: this.mouvementOrigineId, observations: this.observations, lignes: this.lignes()
     }).subscribe({
-      next: m => { this.notif.succes(`Opération ${m.numero} enregistrée — pièce générée en brouillon`); this.router.navigate(['/mouvements', m.id]); },
+      next: m => {
+        this.notif.succes(m.documentId ? `Opération ${m.numero} enregistrée — pièce générée en brouillon`
+          : `Opération ${m.numero} enregistrée — à valider par le comptable`); this.router.navigate(['/mouvements', m.id]); },
       error: () => this.enCours.set(false)
     });
   }
