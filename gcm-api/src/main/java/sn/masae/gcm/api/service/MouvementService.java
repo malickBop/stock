@@ -170,7 +170,10 @@ public class MouvementService implements ImpactHandler {
         r.setTiers(m.getStructure().getCode());
         r.setMouvementOrigine(emis);
         r.setObservations("Réintégration après refus de " + m.getStructure().getCode() + " : " + motif.trim());
-        for (LigneMouvement le : emis.getLignes()) r.addLigne(copie(le, le.getBien()));
+        // Réintégration au prix auquel la sortie a été passée (repris sur l'entrée en attente).
+        for (int i = 0; i < emis.getLignes().size(); i++) {
+            r.addLigne(copie(emis.getLignes().get(i), emis.getLignes().get(i).getBien(), m.getLignes().get(i).getPrixUnitaire()));
+        }
         r.setNumero(numero(r));
         mouvements.save(r);
         stock.appliquer(r);
@@ -218,21 +221,22 @@ public class MouvementService implements ImpactHandler {
         r.setTiers(emis.getStructure().getCode());
         r.setMouvementOrigine(emis);
         r.setObservations("Transfert émis par " + emis.getStructure().getCode() + " — réception à confirmer");
-        for (LigneMouvement le : emis.getLignes()) r.addLigne(copie(le, null));
+        // Prix courant du bien : celui de l'écriture de sortie passée chez l'émetteur.
+        for (LigneMouvement le : emis.getLignes()) r.addLigne(copie(le, null, le.getBien().getPrixUnitaire()));
         r.setNumero(numero(r));
         mouvements.save(r);
         audit.tracer("TRANSFERT_EMIS", "Mouvement", r.getId(), r.getStructure().getCode(), emis.getNumero() + " → " + r.getNumero());
     }
 
-    private static LigneMouvement copie(LigneMouvement le, Bien bien) {
+    private static LigneMouvement copie(LigneMouvement le, Bien bien, BigDecimal prix) {
         LigneMouvement l = new LigneMouvement();
         l.setBien(bien);
         l.setCompte(le.getCompte());
         l.setDesignation(le.getDesignation());
         l.setNatureUnite(le.getNatureUnite());
-        l.setPrixUnitaire(le.getPrixUnitaire());
+        l.setPrixUnitaire(prix);
         l.setQuantite(le.getQuantite());
-        l.setMontant(le.getMontant());
+        l.setMontant(Montants.montant(le.getQuantite(), prix));
         l.setEtat(le.getBien() == null ? le.getEtat() : le.getBien().getEtat());
         return l;
     }
