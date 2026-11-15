@@ -142,6 +142,7 @@ public class MouvementService implements ImpactHandler {
     public MouvementDto confirmerReception(Long id) {
         securite.exiger(Role.COMPTABLE_PRINCIPAL, Role.COMPTABLE_SECONDAIRE);
         Mouvement m = receptionEnAttente(id);
+        reporterSiCloture(m);
         java.time.LocalDate today = ReferentielService.aujourdHui();
         if (today.getYear() == m.getExercice().getAnnee() && today.isAfter(m.getDateMouvement())) m.setDateMouvement(today);
         stock.appliquer(m);
@@ -155,6 +156,7 @@ public class MouvementService implements ImpactHandler {
         securite.exiger(Role.COMPTABLE_PRINCIPAL, Role.COMPTABLE_SECONDAIRE);
         if (motif == null || motif.isBlank()) throw new BusinessException(ErrorCode.VALIDATION, "Le motif du refus est obligatoire");
         Mouvement m = receptionEnAttente(id);
+        reporterSiCloture(m);
         Mouvement emis = m.getMouvementOrigine();
         m.setStatut(StatutMouvement.ANNULE);
         m.setObservations("Réception refusée : " + motif.trim());
@@ -182,6 +184,16 @@ public class MouvementService implements ImpactHandler {
             throw new BusinessException(ErrorCode.WORKFLOW_TRANSITION_INVALIDE, m.getNumero() + " n'est pas un transfert reçu en attente de confirmation");
         }
         return m;
+    }
+
+    /** Un transfert encore en transit à la clôture de son exercice est reporté sur l'exercice ouvert. */
+    private void reporterSiCloture(Mouvement m) {
+        if (!m.getExercice().isCloture()) return;
+        Exercice e = referentiel.exerciceCourant();
+        java.time.LocalDate today = ReferentielService.aujourdHui();
+        m.setExercice(e);
+        m.setDateMouvement(today.getYear() == e.getAnnee() ? today : java.time.LocalDate.of(e.getAnnee(), 1, 1));
+        m.setNumero(numero(m));
     }
 
     private static boolean estReceptionTransfert(Mouvement m) {
