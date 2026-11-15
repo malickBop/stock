@@ -1,6 +1,7 @@
 import { Component, computed, inject, input, signal, effect } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ApiService } from '../core/api.service';
+import { AuthService } from '../core/auth.service';
 import { DateFrPipe, FcfaPipe, LibellePipe } from '../core/format.pipes';
 import { MODULES, SOUS_TYPES, STATUTS_WORKFLOW, TYPES_MOUVEMENT } from '../core/libelles';
 import { Mouvement } from '../core/models';
@@ -13,11 +14,11 @@ import { Mouvement } from '../core/models';
   @if (def(); as m) {
     <h1>{{ m.titre }}</h1>
     <p class="sous-titre">Saisie des opérations et suivi de leurs pièces justificatives</p>
-    <div class="grille">
+    @if (saisie()) { <div class="grille">
       @for (o of m.operations; track o.cle) {
         <a class="carte op" [routerLink]="['/operations', module(), o.cle, 'nouveau']"><strong>{{ o.titre }}</strong><small>{{ o.modele }}</small><span>+ Nouvelle saisie</span></a>
       }
-    </div>
+    </div> }
     <h2>Opérations enregistrées</h2>
     <div class="table-defile"><table class="donnees">
       <thead><tr><th>N°</th><th>Date</th><th>Structure</th><th>Nature</th><th class="masquer-mobile">Pièce / tiers</th><th class="num">Montant</th><th>Statut pièce</th></tr></thead>
@@ -32,7 +33,9 @@ import { Mouvement } from '../core/models';
 })
 export class OperationsComponent {
   private api = inject(ApiService);
+  private auth = inject(AuthService);
   module = input.required<string>();
+  saisie = () => this.auth.a('ADMIN', 'COMPTABLE_PRINCIPAL', 'COMPTABLE_SECONDAIRE', 'MAGASINIER');
   def = computed(() => MODULES[this.module()]);
   private tous = signal<Mouvement[]>([]);
   liste = computed(() => {
