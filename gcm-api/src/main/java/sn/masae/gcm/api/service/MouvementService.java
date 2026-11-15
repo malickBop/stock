@@ -195,9 +195,10 @@ public class MouvementService implements ImpactHandler {
         if (!m.getExercice().isCloture()) return;
         Exercice e = referentiel.exerciceCourant();
         java.time.LocalDate today = ReferentielService.aujourdHui();
+        String numero = numero(m, e);
         m.setExercice(e);
         m.setDateMouvement(today.getYear() == e.getAnnee() ? today : java.time.LocalDate.of(e.getAnnee(), 1, 1));
-        m.setNumero(numero(m));
+        m.setNumero(numero);
     }
 
     private static boolean estReceptionTransfert(Mouvement m) {
@@ -422,6 +423,11 @@ public class MouvementService implements ImpactHandler {
     }
 
     private String numero(Mouvement m) {
+        return numero(m, m.getExercice());
+    }
+
+    /** Numéro dans l'exercice donné, calculé avant que le mouvement y soit rattaché (sinon il se compterait lui-même). */
+    private String numero(Mouvement m, Exercice exercice) {
         String prefixe = switch (m.getTypeMouvement()) {
             case ENTREE -> "E";
             case SORTIE_DEFINITIVE -> "SD";
@@ -431,8 +437,8 @@ public class MouvementService implements ImpactHandler {
             case REPRISE -> "RP";
             case MUTATION -> "MU";
         };
-        long n = mouvements.countByStructureIdAndExerciceId(m.getStructure().getId(), m.getExercice().getId()) + 1;
-        return prefixe + "-" + m.getExercice().getAnnee() + "-" + String.format("%05d", n);
+        long n = mouvements.countByStructureIdAndExerciceId(m.getStructure().getId(), exercice.getId()) + 1;
+        return prefixe + "-" + exercice.getAnnee() + "-" + String.format("%05d", n);
     }
 
     // ---- Impact à la validation finale -----------------------------------------------------
