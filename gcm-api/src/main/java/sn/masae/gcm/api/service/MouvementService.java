@@ -177,7 +177,7 @@ public class MouvementService implements ImpactHandler {
         r.setNumero(numero(r));
         mouvements.save(r);
         stock.appliquer(r);
-        if (emis.getTypeMouvement() == TypeMouvement.MUTATION) stock.remettreEnService(r);
+        if (emis.getTypeMouvement() == TypeMouvement.MUTATION) stock.remettreEnService(r, emis.getDetenteurSource());
         audit.tracer("REFUS_RECEPTION", "Mouvement", m.getId(), m.getStructure().getCode(), m.getNumero() + " : " + motif.trim());
         return dto(m);
     }

@@ -143,10 +143,15 @@ public class StockService {
         ecrire(m, l, b, false, b.getStructure());
     }
 
-    /** Mutation refusée par la destinataire : les quantités réintégrées reprennent leur place en service. */
-    public void remettreEnService(Mouvement reintegration) {
+    /**
+     * Mutation refusée par la destinataire : les quantités réintégrées reprennent leur place en service chez leur détenteur.
+     * Sans détenteur connu (bien repris entre-temps), elles restent en attente d'affectation.
+     */
+    public void remettreEnService(Mouvement reintegration, Acteur detenteurSource) {
         for (LigneMouvement l : reintegration.getLignes()) {
             Bien b = bienRequis(l);
+            if (b.getDetenteur() == null) b.setDetenteur(detenteurSource);
+            if (b.getDetenteur() == null) continue;
             retirer(b, l.getQuantite(), Bien::getQteAttente, Bien::setQteAttente, "en attente");
             b.setQteService(b.getQteService().add(l.getQuantite()));
         }
