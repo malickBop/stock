@@ -211,6 +211,57 @@ class ParcoursCompletIntegrationTest {
         assertThat(lire("/api/dashboard?structureId=1", c).path("valeurEntrees").decimalValue()).isEqualByComparingTo("2250000");
     }
 
+    @Test
+    @Order(8)
+    void transfertEntreStructuresExigeLaConfirmationDuDestinataire() throws Exception {
+        String c = token("comptable");
+        String b = token("comptable.bfpa");
+        long bfpa = json.readTree(mvc.perform(get("/api/auth/moi").header("Authorization", b)).andReturn().getResponse().getContentAsString())
+                .path("structureId").asLong();
+        long bien = lire("/api/biens?structureId=1", c).get(0).path("id").asLong();
+        String transfert = """
+                {"structureId":1,"typeMouvement":"SORTIE_DEFINITIVE","sousType":"TRANSFERT_EMIS","dateMouvement":"%s","structureDestinationId":%d,
+                 "lignes":[{"bienId":%d,"quantite":%d}]}""";
+        mvc.perform(post("/api/mouvements").header("Authorization", c).contentType(MediaType.APPLICATION_JSON)
+                .content(transfert.formatted(LocalDate.now(), 1, bien, 1))).andExpect(status().isBadRequest());
+
+        valider(send(post("/api/mouvements"), c, transfert.formatted(LocalDate.now(), bfpa, bien, 2)), c);
+        assertThat(lire("/api/biens/" + bien, c).path("existant").decimalValue()).isEqualByComparingTo("3");
+        JsonNode attente = lire("/api/transferts/a-receptionner", b);
+        assertThat(attente).hasSize(1);
+        assertThat(lire("/api/biens?structureId=" + bfpa, b)).isEmpty();
+        long reception = attente.get(0).path("id").asLong();
+        mvc.perform(post("/api/mouvements/" + reception + "/valider").header("Authorization", b)).andExpect(status().isUnprocessableEntity());
+        mvc.perform(post("/api/mouvements/" + reception + "/annuler").header("Authorization", b)).andExpect(status().isUnprocessableEntity());
+        assertThat(send(post("/api/mouvements/" + reception + "/confirmer-reception"), b, null).path("statut").asText()).isEqualTo("VALIDE");
+        JsonNode recus = lire("/api/biens?structureId=" + bfpa, b);
+        assertThat(recus).hasSize(1);
+        assertThat(recus.get(0).path("qteAttente").decimalValue()).isEqualByComparingTo("2");
+        assertThat(lire("/api/transferts/a-receptionner", b)).isEmpty();
+
+        valider(send(post("/api/mouvements"), c, transfert.formatted(LocalDate.now(), bfpa, bien, 1)), c);
+        reception = lire("/api/transferts/a-receptionner", b).get(0).path("id").asLong();
+        mvc.perform(post("/api/mouvements/" + reception + "/refuser-reception").header("Authorization", b).contentType(MediaType.APPLICATION_JSON)
+                .content("{\"motif\":\" \"}")).andExpect(status().isBadRequest());
+        assertThat(send(post("/api/mouvements/" + reception + "/refuser-reception"), b, "{\"motif\":\"Matériel non conforme\"}")
+                .path("statut").asText()).isEqualTo("ANNULE");
+        assertThat(lire("/api/biens/" + bien, c).path("existant").decimalValue()).isEqualByComparingTo("3");
+        assertThat(lire("/api/biens?structureId=" + bfpa, b).get(0).path("existant").decimalValue()).isEqualByComparingTo("2");
+    }
+
+    /** Circuit modèle n°3/n°4 : signatures comptable et ordonnateur, visa du réceptionnaire, scan, validation par le comptable. */
+    private void valider(JsonNode mouvement, String c) throws Exception {
+        String o = token("ordonnateur");
+        String doc = "/api/documents/" + mouvement.path("documentId").asLong();
+        send(post(doc + "/signatures"), c, "{\"roleSignature\":\"COMPTABLE\"}");
+        send(post(doc + "/signatures"), o, "{\"roleSignature\":\"ORDONNATEUR\"}");
+        send(post(doc + "/transmettre"), c, null);
+        mvc.perform(multipart(doc + "/visas").file(pdf()).param("typeVisa", "RECEPTIONNAIRE").param("autorite", "Réceptionnaire")
+                .param("dateVisa", LocalDate.now().toString()).header("Authorization", c)).andExpect(status().isOk());
+        mvc.perform(multipart(doc + "/scan").file(pdf()).header("Authorization", c)).andExpect(status().isOk());
+        send(post(doc + "/valider"), c, null);
+    }
+
     private JsonNode signer(String token, String role, Long acteurId) throws Exception {
         return send(post("/api/documents/" + documentId + "/signatures"), token,
                 "{\"roleSignature\":\"" + role + "\",\"acteurId\":" + acteurId + "}");

@@ -13,6 +13,7 @@ import sn.masae.gcm.domain.enums.Role;
 import sn.masae.gcm.domain.repository.BienRepository;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -87,6 +88,22 @@ public class MouvementController {
     @GetMapping("/sorties-provisoires")
     public List<SortieProvisoireDto> sortiesProvisoires(@RequestParam(required = false) Long structureId, @RequestParam(required = false) String etat) {
         return sortiesProvisoires.suivi(structureId, etat);
+    }
+
+    /** Transferts émis par d'autres structures, en attente de confirmation de réception. */
+    @GetMapping("/transferts/a-receptionner")
+    public List<MouvementDto> transfertsAReceptionner(@RequestParam(required = false) Long structureId) {
+        return mouvements.transfertsAReceptionner(structureId);
+    }
+
+    @PostMapping("/mouvements/{id}/confirmer-reception")
+    public MouvementDto confirmerReception(@PathVariable Long id) {
+        return mouvements.confirmerReception(id);
+    }
+
+    @PostMapping("/mouvements/{id}/refuser-reception")
+    public MouvementDto refuserReception(@PathVariable Long id, @RequestBody Map<String, String> corps) {
+        return mouvements.refuserReception(id, corps.get("motif"));
     }
 
     @PostMapping("/mouvements/{id}/annuler")

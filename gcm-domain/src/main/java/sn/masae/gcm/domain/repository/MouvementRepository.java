@@ -17,5 +17,7 @@ public interface MouvementRepository extends JpaRepository<Mouvement, Long> {
     long countByStructureIdAndExerciceId(Long structureId, Long exerciceId);
     List<Mouvement> findByStructureIdInAndTypeMouvementAndStatutOrderByDateRetourPrevueAscIdAsc(Collection<Long> structureIds, TypeMouvement type,
                                                                                                StatutMouvement statut);
+    List<Mouvement> findByStructureIdInAndTypeMouvementAndSousTypeAndStatutAndMouvementOrigineIsNotNullOrderByDateMouvementAscIdAsc(
+            Collection<Long> structureIds, TypeMouvement type, SousTypeMouvement sousType, StatutMouvement statut);
     List<Mouvement> findByMouvementOrigineIdAndStatutNot(Long origineId, StatutMouvement statut);
 }

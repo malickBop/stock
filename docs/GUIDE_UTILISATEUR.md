@@ -35,6 +35,16 @@ Règles appliquées :
 - une sortie ne peut excéder la quantité disponible ; une **sortie provisoire** ne diminue pas l'existant comptable ;
 - aucune saisie n'est possible sur un exercice clôturé.
 
+### Transferts entre structures
+
+Un transfert vers une autre structure (sortie définitive « Transfert émis » ou mutation vers une autre structure) suit le circuit de sa pièce chez l'émetteur. À la validation, seule la **sortie** est passée chez l'émetteur ; une entrée « Transfert reçu » est créée **en attente** chez la structure destinataire, signalée par une alerte sur son tableau de bord.
+
+Le comptable destinataire ouvre cette entrée et :
+- **Confirme la réception** : les biens entrent dans son existant (en attente d'affectation) et son livre-journal ;
+- ou **Refuse la réception** avec un motif : les biens sont réintégrés dans l'existant de l'émetteur.
+
+Une entrée de transfert reçu ne peut être ni validée directement ni annulée.
+
 ### Sorties provisoires et retours
 
 Une **sortie provisoire** (prêt, location, réparation, exposition — art. 54) exige un réceptionnaire et une date de retour prévue. Elle suit le circuit du **modèle n°4** (signatures du comptable et de l'ordonnateur, visa du réceptionnaire, scan) ; à la validation, la quantité passe en « sortie provisoire » sans diminuer l'existant.

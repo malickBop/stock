@@ -116,14 +116,121 @@ public class MouvementService implements ImpactHandler {
         if (MODELE.containsKey(m.getTypeMouvement())) {
             throw new BusinessException(ErrorCode.WORKFLOW_TRANSITION_INVALIDE, "Ce mouvement doit être validé via le circuit de son document réglementaire");
         }
+        if (estReceptionTransfert(m)) {
+            throw new BusinessException(ErrorCode.WORKFLOW_TRANSITION_INVALIDE, "Un transfert reçu se confirme ou se refuse par la structure destinataire");
+        }
         stock.appliquer(m);
         audit.tracer("VALIDATION", "Mouvement", m.getId(), m.getStructure().getCode(), m.getNumero());
         return dto(m);
     }
 
+    // ---- Transferts entre structures ------------------------------------------------------
+
+    /** Transferts émis vers les structures du périmètre, en attente de confirmation de réception. */
+    @Transactional(readOnly = true)
+    public List<MouvementDto> transfertsAReceptionner(Long structureId) {
+        return receptionsEnAttente(securite.perimetre(structureId)).stream().map(this::dto).toList();
+    }
+
+    public List<Mouvement> receptionsEnAttente(Collection<Long> structureIds) {
+        return structureIds.isEmpty() ? List.of()
+                : mouvements.findByStructureIdInAndTypeMouvementAndSousTypeAndStatutAndMouvementOrigineIsNotNullOrderByDateMouvementAscIdAsc(
+                structureIds, TypeMouvement.ENTREE, SousTypeMouvement.TRANSFERT_RECU, StatutMouvement.BROUILLON);
+    }
+
+    /** La structure destinataire confirme la réception : l'entrée est alors passée dans son existant et son livre-journal. */
+    public MouvementDto confirmerReception(Long id) {
+        securite.exiger(Role.COMPTABLE_PRINCIPAL, Role.COMPTABLE_SECONDAIRE);
+        Mouvement m = receptionEnAttente(id);
+        java.time.LocalDate today = ReferentielService.aujourdHui();
+        if (today.getYear() == m.getExercice().getAnnee() && today.isAfter(m.getDateMouvement())) m.setDateMouvement(today);
+        stock.appliquer(m);
+        audit.tracer("CONFIRMATION_RECEPTION", "Mouvement", m.getId(), m.getStructure().getCode(),
+                m.getNumero() + " (transfert " + m.getMouvementOrigine().getNumero() + ")");
+        return dto(m);
+    }
+
+    /** La structure destinataire refuse la réception : les biens sont réintégrés dans l'existant de la structure émettrice. */
+    public MouvementDto refuserReception(Long id, String motif) {
+        securite.exiger(Role.COMPTABLE_PRINCIPAL, Role.COMPTABLE_SECONDAIRE);
+        if (motif == null || motif.isBlank()) throw new BusinessException(ErrorCode.VALIDATION, "Le motif du refus est obligatoire");
+        Mouvement m = receptionEnAttente(id);
+        Mouvement emis = m.getMouvementOrigine();
+        m.setStatut(StatutMouvement.ANNULE);
+        m.setObservations("Réception refusée : " + motif.trim());
+        Mouvement r = new Mouvement();
+        r.setStructure(emis.getStructure());
+        r.setExercice(m.getExercice());
+        r.setTypeMouvement(TypeMouvement.ENTREE);
+        r.setSousType(SousTypeMouvement.TRANSFERT_RECU);
+        r.setDateMouvement(m.getDateMouvement());
+        r.setReferencePiece(emis.getNumero());
+        r.setTiers(m.getStructure().getCode());
+        r.setMouvementOrigine(emis);
+        r.setObservations("Réintégration après refus de " + m.getStructure().getCode() + " : " + motif.trim());
+        for (LigneMouvement le : emis.getLignes()) r.addLigne(copie(le, le.getBien()));
+        r.setNumero(numero(r));
+        mouvements.save(r);
+        stock.appliquer(r);
+        audit.tracer("REFUS_RECEPTION", "Mouvement", m.getId(), m.getStructure().getCode(), m.getNumero() + " : " + motif.trim());
+        return dto(m);
+    }
+
+    private Mouvement receptionEnAttente(Long id) {
+        Mouvement m = mouvement(id);
+        if (!estReceptionTransfert(m) || m.getStatut() != StatutMouvement.BROUILLON) {
+            throw new BusinessException(ErrorCode.WORKFLOW_TRANSITION_INVALIDE, m.getNumero() + " n'est pas un transfert reçu en attente de confirmation");
+        }
+        return m;
+    }
+
+    private static boolean estReceptionTransfert(Mouvement m) {
+        return m.getTypeMouvement() == TypeMouvement.ENTREE && m.getSousType() == SousTypeMouvement.TRANSFERT_RECU && m.getMouvementOrigine() != null;
+    }
+
+    private static boolean estTransfertInterStructures(Mouvement m) {
+        boolean type = m.getTypeMouvement() == TypeMouvement.MUTATION
+                || (m.getTypeMouvement() == TypeMouvement.SORTIE_DEFINITIVE && m.getSousType() == SousTypeMouvement.TRANSFERT_EMIS);
+        return type && m.getStructureDestination() != null && !m.getStructureDestination().getId().equals(m.getStructure().getId());
+    }
+
+    /** Après validation d'un transfert émis : entrée en attente de confirmation chez la structure destinataire. */
+    private void ouvrirReceptionTransfert(Mouvement emis) {
+        Mouvement r = new Mouvement();
+        r.setStructure(emis.getStructureDestination());
+        r.setExercice(emis.getExercice());
+        r.setTypeMouvement(TypeMouvement.ENTREE);
+        r.setSousType(SousTypeMouvement.TRANSFERT_RECU);
+        r.setDateMouvement(emis.getDateMouvement());
+        r.setReferencePiece(emis.getNumero());
+        r.setTiers(emis.getStructure().getCode());
+        r.setMouvementOrigine(emis);
+        r.setObservations("Transfert émis par " + emis.getStructure().getCode() + " — réception à confirmer");
+        for (LigneMouvement le : emis.getLignes()) r.addLigne(copie(le, null));
+        r.setNumero(numero(r));
+        mouvements.save(r);
+        audit.tracer("TRANSFERT_EMIS", "Mouvement", r.getId(), r.getStructure().getCode(), emis.getNumero() + " → " + r.getNumero());
+    }
+
+    private static LigneMouvement copie(LigneMouvement le, Bien bien) {
+        LigneMouvement l = new LigneMouvement();
+        l.setBien(bien);
+        l.setCompte(le.getCompte());
+        l.setDesignation(le.getDesignation());
+        l.setNatureUnite(le.getNatureUnite());
+        l.setPrixUnitaire(le.getPrixUnitaire());
+        l.setQuantite(le.getQuantite());
+        l.setMontant(le.getMontant());
+        l.setEtat(le.getBien() == null ? le.getEtat() : le.getBien().getEtat());
+        return l;
+    }
+
     public void annuler(Long id) {
         securite.exiger(Role.COMPTABLE_PRINCIPAL, Role.COMPTABLE_SECONDAIRE);
         Mouvement m = mouvement(id);
+        if (estReceptionTransfert(m)) {
+            throw new BusinessException(ErrorCode.WORKFLOW_TRANSITION_INVALIDE, "Un transfert reçu ne s'annule pas : le refuser pour réintégrer les biens chez l'émetteur");
+        }
         if (m.getStatut() == StatutMouvement.VALIDE) {
             throw new BusinessException(ErrorCode.WORKFLOW_TRANSITION_INVALIDE, "Un mouvement validé ne peut être annulé : passer une écriture inverse");
         }
@@ -189,8 +296,12 @@ public class MouvementService implements ImpactHandler {
                 }
             }
             case SORTIE_DEFINITIVE -> {
-                if (r.receptionnaire() == null && r.tiers() == null) {
+                if (r.receptionnaire() == null && r.tiers() == null && m.getStructureDestination() == null) {
                     throw new BusinessException(ErrorCode.VALIDATION, "Le bénéficiaire / réceptionnaire de la sortie est obligatoire");
+                }
+                if (r.sousType() == SousTypeMouvement.TRANSFERT_EMIS
+                        && (m.getStructureDestination() == null || m.getStructureDestination().getId().equals(s.getId()))) {
+                    throw new BusinessException(ErrorCode.VALIDATION, "Un transfert émis exige une structure destinataire différente de l'émettrice");
                 }
             }
             case AFFECTATION -> {
@@ -318,6 +429,7 @@ public class MouvementService implements ImpactHandler {
     public void appliquer(DocumentReglementaire d) {
         Mouvement m = d.getMouvement();
         stock.appliquer(m);
+        if (estTransfertInterStructures(m)) ouvrirReceptionTransfert(m);
         if (d.getModele() == 1) {
             // Le bon d'entrée (M2) est généré après clôture du PV de réception.
             DocumentReglementaire bon = workflow.creer(2, m.getStructure(), m.getExercice(), m.getMontantTotal(), false);

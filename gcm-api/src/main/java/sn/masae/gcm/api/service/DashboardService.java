@@ -66,6 +66,9 @@ public class DashboardService {
         List<Bien> bs = ids.isEmpty() ? List.of() : biens.findByStructureIdInOrderByNumeroInventaireAsc(ids);
         List<DocumentReglementaire> docs = ids.isEmpty() ? List.of() : documents.findByStructureIdInAndExerciceIdAndStatutIn(ids, e.getId(), EN_CIRCUIT);
         List<Mouvement> sp = ids.isEmpty() ? List.of() : sortiesProvisoires.nonSoldees(ids);
+        List<Mouvement> transferts = ids.isEmpty() ? List.of()
+                : mouvements.findByStructureIdInAndTypeMouvementAndSousTypeAndStatutAndMouvementOrigineIsNotNullOrderByDateMouvementAscIdAsc(ids,
+                TypeMouvement.ENTREE, SousTypeMouvement.TRANSFERT_RECU, StatutMouvement.BROUILLON);
         List<Bien> sousSeuil = ids.isEmpty() ? List.of() : biens.findSousSeuil(ids);
         List<EcritureJournal> ecritures = ids.isEmpty() ? List.of() : journal.findByStructureIdInAndExerciceIdOrderByStructureIdAscNumeroOrdreAsc(ids, e.getId());
 
@@ -108,6 +111,10 @@ public class DashboardService {
                 alertes.add(new Alerte("VALIDATION", "INFO", d.getNumero() + " — en attente de validation finale", d.getStructure().getCode(), d.getId(),
                         "/documents/" + d.getId()));
             }
+        }
+        for (Mouvement m : transferts) {
+            alertes.add(new Alerte("TRANSFERT", "ATTENTION", "Transfert " + m.getReferencePiece() + " émis par " + m.getTiers()
+                    + " : réception à confirmer (" + m.getNumero() + ")", m.getStructure().getCode(), m.getId(), "/mouvements/" + m.getId()));
         }
         for (Mouvement m : sp) {
             if (m.getDateRetourPrevue() != null && m.getDateRetourPrevue().isBefore(today)) {

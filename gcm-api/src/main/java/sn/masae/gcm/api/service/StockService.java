@@ -137,29 +137,10 @@ public class StockService {
             if (m.getDetenteurDestination() != null) b.setDetenteur(m.getDetenteurDestination());
             return;
         }
-        // Mutation inter-structures : sortie chez la structure d'origine, entrée chez la destinataire.
+        // Mutation inter-structures : seule la sortie est passée ici ; l'entrée attend la confirmation de la structure destinataire.
+        b.setQteService(b.getQteService().subtract(l.getQuantite()));
+        if (b.getQteService().signum() == 0) b.setDetenteur(null);
         ecrire(m, l, b, false, b.getStructure());
-        Bien cible;
-        if (b.getExistant().compareTo(l.getQuantite()) == 0) {
-            b.setStructure(dest);
-            cible = b;
-        } else {
-            b.setQteService(b.getQteService().subtract(l.getQuantite()));
-            cible = new Bien();
-            cible.setNumeroInventaire(b.getNumeroInventaire() + "-M" + m.getId());
-            cible.setDesignation(b.getDesignation());
-            cible.setCompte(b.getCompte());
-            cible.setGroupe(b.getGroupe());
-            cible.setStructure(dest);
-            cible.setNatureUnite(b.getNatureUnite());
-            cible.setPrixUnitaire(b.getPrixUnitaire());
-            cible.setEtat(b.getEtat());
-            cible.setDateAcquisition(b.getDateAcquisition());
-            cible.setQteService(l.getQuantite());
-            biens.save(cible);
-        }
-        if (m.getDetenteurDestination() != null) cible.setDetenteur(m.getDetenteurDestination());
-        ecrire(m, l, cible, true, dest);
     }
 
     private Bien bienRequis(LigneMouvement l) {
