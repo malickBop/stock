@@ -39,8 +39,9 @@ export class ApiService {
   telecharger(url: string, params?: Params): void {
     this.http.get('/api' + url, { params: this.params(params), responseType: 'blob', observe: 'response' }).subscribe(r => {
       const cd = r.headers.get('Content-Disposition') ?? '';
-      const m = /filename\*=UTF-8''([^;]+)|filename="?([^";]+)"?/.exec(cd);
-      const nom = m ? decodeURIComponent(m[1] ?? m[2]) : 'document';
+      const etoile = /filename\*=UTF-8''([^;]+)/i.exec(cd);
+      const simple = /filename="?([^";]+)"?/i.exec(cd);
+      const nom = etoile ? decodeURIComponent(etoile[1]) : simple?.[1] ?? 'document';
       const a = document.createElement('a');
       a.href = URL.createObjectURL(r.body!);
       a.download = nom;
