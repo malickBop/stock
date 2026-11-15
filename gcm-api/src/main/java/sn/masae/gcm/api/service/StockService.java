@@ -138,9 +138,18 @@ public class StockService {
             return;
         }
         // Mutation inter-structures : seule la sortie est passée ici ; l'entrée attend la confirmation de la structure destinataire.
+        // Le détenteur est conservé : il retrouve le bien si la destinataire refuse la réception.
         b.setQteService(b.getQteService().subtract(l.getQuantite()));
-        if (b.getQteService().signum() == 0) b.setDetenteur(null);
         ecrire(m, l, b, false, b.getStructure());
+    }
+
+    /** Mutation refusée par la destinataire : les quantités réintégrées reprennent leur place en service. */
+    public void remettreEnService(Mouvement reintegration) {
+        for (LigneMouvement l : reintegration.getLignes()) {
+            Bien b = bienRequis(l);
+            retirer(b, l.getQuantite(), Bien::getQteAttente, Bien::setQteAttente, "en attente");
+            b.setQteService(b.getQteService().add(l.getQuantite()));
+        }
     }
 
     private Bien bienRequis(LigneMouvement l) {
