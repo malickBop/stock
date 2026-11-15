@@ -29,10 +29,10 @@ import { NotificationService } from '../core/notification.service';
     <table class="donnees"><thead><tr><th>N° inventaire</th><th>Compte</th><th>Désignation</th><th class="num">Quantité</th><th class="num">P.U.</th><th class="num">Montant</th></tr></thead>
       <tbody>@for (l of m.lignes; track l.id) { <tr><td>{{ l.numeroInventaire || 'attribué à la validation' }}</td><td>{{ l.compte }}</td><td>{{ l.designation }}</td>
         <td class="num">{{ l.quantite | qte }} {{ l.natureUnite }}</td><td class="num">{{ l.prixUnitaire | fcfa }}</td><td class="num">{{ l.montant | fcfa }}</td></tr> }</tbody></table>
-    @if (!m.documentId && m.statut !== 'VALIDE' && m.statut !== 'ANNULE' && comptable) {
+    @if (m.typeMouvement === 'RETOUR' && m.statut !== 'VALIDE' && m.statut !== 'ANNULE' && comptable) {
       <div class="ligne" style="margin-top:1rem"><span class="espace"></span>
         <button class="secondaire" (click)="annuler(m)">Annuler</button>
-        <button (click)="valider(m)">Valider {{ m.typeMouvement === 'RETOUR' ? 'le retour' : 'l\'opération' }}</button></div> }
+        <button (click)="valider(m)">Valider le retour</button></div> }
   }`,
   styles: [`small { color: var(--gris-600); font-size: .75rem; }`]
 })
