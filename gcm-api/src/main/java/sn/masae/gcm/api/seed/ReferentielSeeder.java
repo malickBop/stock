@@ -64,12 +64,29 @@ public class ReferentielSeeder implements ApplicationRunner {
     @Override
     @Transactional
     public void run(ApplicationArguments args) throws Exception {
-        if (!props.seed() || structures.count() > 0) {
+        if (props.seed() && structures.count() == 0) {
+            try (InputStream in = new ClassPathResource(CLASSEUR).getInputStream(); Workbook wb = WorkbookFactory.create(in)) {
+                importer(wb);
+            }
+        }
+        creerAdministrateurInitial();
+    }
+
+    /** Crée le compte {@code admin} avec GCM_ADMIN_PASSWORD s'il n'existe pas encore (installation de production). */
+    void creerAdministrateurInitial() {
+        if (props.adminPassword() == null || props.adminPassword().isBlank() || utilisateurs.existsByLogin("admin")) {
             return;
         }
-        try (InputStream in = new ClassPathResource(CLASSEUR).getInputStream(); Workbook wb = WorkbookFactory.create(in)) {
-            importer(wb);
-        }
+        structures.findAll().stream().filter(s -> "STR-001".equals(s.getCode())).findFirst().ifPresent(dage -> {
+            Utilisateur u = new Utilisateur();
+            u.setLogin("admin");
+            u.setNomComplet("Administrateur fonctionnel");
+            u.setStructure(dage);
+            u.getRoles().add(Role.ADMIN);
+            u.setMotDePasse(encoder.encode(props.adminPassword()));
+            utilisateurs.save(u);
+            LOG.info("Compte administrateur initial créé : changer son mot de passe dès la première connexion");
+        });
     }
 
     /** Point d'entrée réutilisable (tests). */

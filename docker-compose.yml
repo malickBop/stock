@@ -1,5 +1,6 @@
 # Plateforme GCM — MASAE : base PostgreSQL, API Spring Boot, interface Angular (nginx)
 # Démarrage : cp .env.example .env && (renseigner les secrets) && docker compose up -d --build
+# Production : docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
 services:
   db:
     image: postgres:16-alpine
@@ -29,7 +30,8 @@ services:
       GCM_DB_USER: ${POSTGRES_USER:-gcm}
       GCM_DB_PASSWORD: ${POSTGRES_PASSWORD}
       GCM_JWT_SECRET: ${GCM_JWT_SECRET:?GCM_JWT_SECRET requis}
-      GCM_DEMO_PASSWORD: ${GCM_DEMO_PASSWORD:?GCM_DEMO_PASSWORD requis}
+      GCM_DEMO_PASSWORD: ${GCM_DEMO_PASSWORD:-}
+      GCM_ADMIN_PASSWORD: ${GCM_ADMIN_PASSWORD:-}
       GCM_SEED: ${GCM_SEED:-true}
       GCM_STOCKAGE_DIR: /data/ged
     volumes:

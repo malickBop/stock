@@ -1,0 +1,22 @@
+# Profil de production : SPRING_PROFILES_ACTIVE=prod (voir docker-compose.prod.yml)
+spring:
+  datasource:
+    password: ${GCM_DB_PASSWORD}
+
+gcm:
+  production: true
+  jwt-secret: ${GCM_JWT_SECRET}
+  jwt-validite-minutes: ${GCM_JWT_VALIDITE_MINUTES:240}
+  demo-password: ""
+  admin-password: ${GCM_ADMIN_PASSWORD:}
+
+springdoc:
+  api-docs:
+    enabled: ${GCM_SWAGGER:false}
+  swagger-ui:
+    enabled: ${GCM_SWAGGER:false}
+
+logging:
+  level:
+    root: INFO
+    org.hibernate.SQL: WARN

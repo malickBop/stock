@@ -127,3 +127,37 @@ cd frontend && npm run test:ci # tests Angular (Chrome headless ; CHROME_BIN si 
 ```
 Le test `ParcoursCompletIntegrationTest` déroule le parcours complet : réception au-delà du seuil, signatures de commission, visa CBM, scan, validation finale, stock, livre-journal, balance, génération PDF/DOCX, exports et préparation du compte de gestion.
 Les tests Angular couvrent la session et les rôles, l'intercepteur JWT (déconnexion sur 401), les formats FCFA/quantités/dates, les libellés réglementaires, la confirmation de réception réservée au comptable destinataire et la page des utilisateurs réservée à l'administrateur.
+
+## 9. Mise en production
+
+1. Sur le serveur (Linux, Docker ≥ 24, 4 Go de RAM, 2 vCPU, disque sauvegardé), cloner le dépôt puis créer `.env` depuis `.env.example` :
+   ```bash
+   POSTGRES_PASSWORD=$(openssl rand -base64 24)
+   GCM_JWT_SECRET=$(openssl rand -base64 48)
+   GCM_ADMIN_PASSWORD=<mot de passe initial de l'administrateur, 12 caractères minimum>
+   GCM_DEMO_PASSWORD=
+   ```
+2. Démarrer avec la surcharge de production :
+   ```bash
+   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+   ```
+   Le profil `prod` refuse de démarrer si le secret JWT fait moins de 48 octets ou reprend la valeur de développement, si le mot de passe de la base fait moins de 12 caractères, ou si un mot de passe de démonstration est renseigné. Aucun compte de démonstration n'est créé ; seul le compte `admin` l'est, avec `GCM_ADMIN_PASSWORD`. Swagger est désactivé (`GCM_SWAGGER=true` pour l'ouvrir aux partenaires).
+3. Se connecter en `admin`, changer son mot de passe, puis créer les comptes nominatifs (Référentiels → Utilisateurs) et nommer les acteurs. Retirer ensuite `GCM_ADMIN_PASSWORD` du `.env`.
+4. HTTPS : l'interface écoute sur `127.0.0.1:8081` (`GCM_HTTP_BIND`, `GCM_HTTP_PORT`). La publier derrière un reverse proxy TLS (nginx + certificat de l'ADIE ou Let's Encrypt), par exemple :
+   ```nginx
+   server {
+     listen 443 ssl http2;
+     server_name gcm.agriculture.gouv.sn;
+     ssl_certificate     /etc/ssl/gcm/fullchain.pem;
+     ssl_certificate_key /etc/ssl/gcm/privkey.pem;
+     add_header Strict-Transport-Security "max-age=31536000" always;
+     client_max_body_size 25m;
+     location / { proxy_pass http://127.0.0.1:8081; proxy_set_header Host $host; proxy_set_header X-Forwarded-Proto https; }
+   }
+   ```
+5. Sauvegardes quotidiennes de la base et de la GED, avec rotation sur 30 jours :
+   ```bash
+   0 2 * * * cd /opt/stock && outils/sauvegarde.sh /var/backups/gcm 30
+   ```
+   Copier `/var/backups/gcm` hors du serveur. Restauration : `pg_restore -U gcm -d gcm --clean <fichier>.dump` et extraction de l'archive GED dans le volume `ged`.
+6. Clés d'interopérabilité : une clé par partenaire (§ 5), transmise par canal sécurisé.

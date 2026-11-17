@@ -1,0 +1,21 @@
+# Surcharge de production : profil prod (contrôles bloquants), aucun compte de démonstration, journaux bornés.
+# docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+x-journaux: &journaux
+  logging:
+    driver: json-file
+    options: { max-size: "20m", max-file: "5" }
+
+services:
+  db:
+    <<: *journaux
+  api:
+    <<: *journaux
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      GCM_DEMO_PASSWORD: ""
+      GCM_ADMIN_PASSWORD: ${GCM_ADMIN_PASSWORD:-}
+      GCM_SWAGGER: ${GCM_SWAGGER:-false}
+  web:
+    <<: *journaux
+    ports: !override
+      - "${GCM_HTTP_BIND:-127.0.0.1}:${GCM_HTTP_PORT:-8081}:80"
