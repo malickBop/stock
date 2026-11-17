@@ -303,4 +303,26 @@ class ParcoursCompletIntegrationTest {
         if (body != null) req.contentType(MediaType.APPLICATION_JSON).content(body);
         return json.readTree(mvc.perform(req).andExpect(status().isOk()).andReturn().getResponse().getContentAsString());
     }
+
+    @Autowired
+    private org.springframework.jdbc.core.JdbcTemplate jdbc;
+
+    @Test
+    @Order(100)
+    void interoperabiliteParCleApi() throws Exception {
+        String cle = "cle-test-interop-0123456789";
+        jdbc.update("INSERT INTO api_client(nom, cle_hash, description) VALUES ('TEST-SIGIF', ?, 'test')", sn.masae.gcm.api.security.Hashes.sha256(cle));
+        int annee = LocalDate.now().getYear();
+        mvc.perform(get("/api/interop/situations").param("exercice", String.valueOf(annee))).andExpect(status().isUnauthorized());
+        mvc.perform(get("/api/interop/situations").param("exercice", String.valueOf(annee)).header("X-API-Key", "mauvaise")).andExpect(status().isUnauthorized());
+        mvc.perform(get("/api/interop/situations").param("exercice", String.valueOf(annee)).header("X-API-Key", cle))
+                .andExpect(status().isOk()).andExpect(jsonPath("$[0].existantFin").exists());
+        String json = mvc.perform(get("/api/interop/mouvements").param("exercice", String.valueOf(annee)).header("X-API-Key", cle))
+                .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+        JsonNode mvts = new ObjectMapper().readTree(json);
+        assertThat(mvts.size()).isPositive();
+        assertThat(mvts.get(0).path("dateValidation").asText()).isNotBlank();
+        mvc.perform(post("/api/interop/structures").header("X-API-Key", cle)).andExpect(status().isMethodNotAllowed());
+        mvc.perform(get("/api/mouvements").header("X-API-Key", cle)).andExpect(status().isUnauthorized());
+    }
 }

@@ -16,7 +16,7 @@ public class OpenApiConfig {
         return new OpenAPI()
                 .info(new Info().title("GCM MASAE — API Comptabilité des matières")
                         .description("API REST de la plateforme de comptabilité des matières (Décret n°2018-842, Instruction n°0001/MFB/DGB). "
-                                + "Les points d'accès /api/interop/v1 sont destinés aux systèmes tiers (SIGIF, SYSBUDGEP) via l'en-tête X-API-Key.")
+                                + "Les points d'accès /api/interop sont destinés aux systèmes tiers (SIGIF, SYSBUDGEP) via l'en-tête X-API-Key.")
                         .version("1.0.0"))
                 .components(new Components()
                         .addSecuritySchemes("bearer", new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT"))

@@ -95,6 +95,10 @@ docker compose exec db psql -U gcm -d gcm -c \
 ```
 Révocation : `UPDATE api_client SET actif = false WHERE nom = 'SIGIF';`
 
+Chaque mouvement porte sa `dateValidation` : le partenaire conserve la plus grande reçue et la repasse en `depuis` à l'appel suivant.
+Un client de référence (Python, bibliothèque standard) est fourni : `GCM_API_KEY=<clé> python3 outils/client_interop.py --url https://gcm.example --exercice 2026`.
+Il synchronise les mouvements de façon incrémentale (fichier `etat_sync.json`) et contrôle existant début + entrées − sorties = existant fin pour chaque structure.
+
 La documentation OpenAPI complète est disponible sur `/swagger-ui.html` (spécification `/v3/api-docs`).
 
 ## 6. Sauvegarde, archivage et conservation

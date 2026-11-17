@@ -71,6 +71,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(ErreurResponse.of(ErrorCode.VALIDATION.name(), e.getMessage(), null));
     }
 
+    @ExceptionHandler(org.springframework.web.HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ErreurResponse> methode(org.springframework.web.HttpRequestMethodNotSupportedException e) {
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(ErreurResponse.of(ErrorCode.VALIDATION.name(), "Méthode " + e.getMethod() + " non autorisée", null));
+    }
+
     @ExceptionHandler(org.springframework.web.servlet.resource.NoResourceFoundException.class)
     public ResponseEntity<ErreurResponse> introuvable(org.springframework.web.servlet.resource.NoResourceFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErreurResponse.of(ErrorCode.RESSOURCE_INTROUVABLE.name(), "Ressource introuvable : /" + e.getResourcePath(), null));

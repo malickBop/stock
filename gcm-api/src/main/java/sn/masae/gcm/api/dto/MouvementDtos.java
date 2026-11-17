@@ -67,7 +67,8 @@ public final class MouvementDtos {
                                SousTypeMouvement sousType, StatutMouvement statut, LocalDate dateMouvement, String referencePiece,
                                String tiers, String structureDestination, String detenteurSource, String detenteurDestination,
                                String receptionnaire, LocalDate dateRetourPrevue, Long mouvementOrigineId, BigDecimal montantTotal,
-                               String observations, Long documentId, StatutWorkflow statutDocument, List<LigneDto> lignes) {
+                               String observations, Long documentId, StatutWorkflow statutDocument, java.time.Instant dateValidation,
+                               List<LigneDto> lignes) {
         public static MouvementDto of(Mouvement m, DocumentReglementaire doc) {
             return new MouvementDto(m.getId(), m.getNumero(), m.getStructure().getId(), m.getStructure().getCode(), m.getExercice().getAnnee(),
                     m.getTypeMouvement(), m.getSousType(), m.getStatut(), m.getDateMouvement(), m.getReferencePiece(), m.getTiers(),
@@ -75,7 +76,7 @@ public final class MouvementDtos {
                     m.getDetenteurSource() == null ? null : m.getDetenteurSource().getNomComplet(),
                     m.getDetenteurDestination() == null ? null : m.getDetenteurDestination().getNomComplet(),
                     m.getReceptionnaire(), m.getDateRetourPrevue(), m.getMouvementOrigine() == null ? null : m.getMouvementOrigine().getId(),
-                    m.getMontantTotal(), m.getObservations(), doc == null ? null : doc.getId(), doc == null ? null : doc.getStatut(),
+                    m.getMontantTotal(), m.getObservations(), doc == null ? null : doc.getId(), doc == null ? null : doc.getStatut(), m.getDateValidation(),
                     m.getLignes().stream().map(LigneDto::of).toList());
         }
     }
