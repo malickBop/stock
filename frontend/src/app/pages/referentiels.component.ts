@@ -71,7 +71,7 @@ import { ReferentielStore } from '../core/referentiel.store';
           <td>@if (admin && e.statut !== 'CLOTURE') { <button class="petit danger" (click)="cloturer(e.annee)">Clôturer</button> }</td></tr> }</tbody></table>
       @if (admin) { <div class="ligne" style="margin-top:.5rem"><input type="number" [(ngModel)]="nouvelExercice" style="width:100px"><button (click)="ouvrirExercice()">Ouvrir l'exercice</button></div> }
     }
-    @case ('utilisateurs') {
+    @case ('utilisateurs') { @if (!admin) { <p class="carte">Réservé à l'administrateur fonctionnel.</p> } @else {
       <div class="ligne" style="margin-bottom:.5rem"><span class="espace"></span><button (click)="u = {roles: ['CONSULTATION'], actif: true, structureId: ref.structures()[0].id}">Nouvel utilisateur</button></div>
       <table class="donnees"><thead><tr><th>Identifiant</th><th>Nom</th><th>Structure</th><th>Rôles</th><th>Actif</th><th>Dernière connexion</th><th></th></tr></thead>
         <tbody>@for (x of utilisateurs(); track x.id) { <tr><td>{{ x.login }}</td><td>{{ x.nomComplet }}</td><td>{{ x.structureCode }}</td>
@@ -86,7 +86,7 @@ import { ReferentielStore } from '../core/referentiel.store';
         <label class="champ">{{ u.id ? 'Nouveau mot de passe (facultatif)' : 'Mot de passe initial' }} <input type="password" [(ngModel)]="u.motDePasse"></label>
         <label><input type="checkbox" [(ngModel)]="u.actif"> Compte actif</label>
         <div class="ligne"><span class="espace"></span><button class="secondaire" (click)="u = null">Annuler</button><button (click)="enregistrerUtilisateur()">Enregistrer</button></div></div></div> }
-    }
+    } }
   }`
 })
 export class ReferentielsComponent {
@@ -133,7 +133,8 @@ export class ReferentielsComponent {
   ouvrirExercice() { this.api.post('/referentiels/exercices/' + this.nouvelExercice).subscribe(() => this.ok('Exercice ouvert')); }
   editer(x: Utilisateur) { this.u = { ...x, motDePasse: '' }; }
   enregistrerUtilisateur() {
-    const r = this.u.id ? this.api.put('/admin/utilisateurs/' + this.u.id, this.u) : this.api.post('/admin/utilisateurs', this.u);
+    const corps = { ...this.u, motDePasse: this.u.motDePasse || null };
+    const r = this.u.id ? this.api.put('/admin/utilisateurs/' + this.u.id, corps) : this.api.post('/admin/utilisateurs', corps);
     r.subscribe(() => { this.u = null; this.ok('Utilisateur enregistré'); });
   }
 }

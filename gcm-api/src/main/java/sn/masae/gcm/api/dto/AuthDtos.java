@@ -33,6 +33,6 @@ public final class AuthDtos {
 
     public record UtilisateurRequest(@NotBlank @Size(max = 60) String login, @NotBlank String nomComplet, @Email String email,
                                      @NotNull Long structureId, Long acteurId, @NotEmpty Set<Role> roles, Boolean actif,
-                                     @Size(min = 10) String motDePasse) {
+                                     @Pattern(regexp = "^$|.{10,}", message = "10 caractères minimum") String motDePasse) {
     }
 }

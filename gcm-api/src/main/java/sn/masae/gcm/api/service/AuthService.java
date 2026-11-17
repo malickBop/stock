@@ -108,7 +108,7 @@ public class AuthService {
         u.getRoles().clear();
         u.getRoles().addAll(r.roles());
         u.setActif(r.actif() == null || r.actif());
-        if (r.motDePasse() != null) {
+        if (r.motDePasse() != null && !r.motDePasse().isBlank()) {
             u.setMotDePasse(encoder.encode(r.motDePasse()));
         } else if (id == null) {
             throw new BusinessException(ErrorCode.VALIDATION, "Mot de passe initial obligatoire");

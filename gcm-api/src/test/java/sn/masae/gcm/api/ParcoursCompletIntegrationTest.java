@@ -251,6 +251,20 @@ class ParcoursCompletIntegrationTest {
     }
 
     /** Circuit modèle n°3/n°4 : signatures comptable et ordonnateur, visa du réceptionnaire, scan, validation par le comptable. */
+    @Test
+    @Order(99)
+    void modificationEtDesactivationUtilisateurSansMotDePasse() throws Exception {
+        String admin = token("admin");
+        JsonNode u = send(post("/api/admin/utilisateurs"), admin,
+                "{\"login\":\"test.desactive\",\"nomComplet\":\"Test\",\"structureId\":1,\"roles\":[\"CONSULTATION\"],\"actif\":true,\"motDePasse\":\"Masae@2026\"}");
+        token("test.desactive");
+        send(put("/api/admin/utilisateurs/" + u.path("id").asLong()), admin,
+                "{\"login\":\"test.desactive\",\"nomComplet\":\"Test\",\"structureId\":1,\"roles\":[\"CONSULTATION\"],\"actif\":false,\"motDePasse\":\"\"}");
+        mvc.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"login\":\"test.desactive\",\"motDePasse\":\"Masae@2026\"}"))
+                .andExpect(status().is4xxClientError());
+    }
+
     private void valider(JsonNode mouvement, String c) throws Exception {
         String o = token("ordonnateur");
         String doc = "/api/documents/" + mouvement.path("documentId").asLong();
