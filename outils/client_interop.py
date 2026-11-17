@@ -36,12 +36,14 @@ def main():
     p = argparse.ArgumentParser()
     p.add_argument("--url", default="http://localhost:8080")
     p.add_argument("--exercice", type=int, required=True)
-    p.add_argument("--etat", default="etat_sync.json", help="fichier du point de synchronisation incrémentale")
+    p.add_argument("--etat", default="etat_sync.json", help="fichier des points de synchronisation (un par URL et exercice)")
     a = p.parse_args()
     cle = os.environ.get("GCM_API_KEY")
     if not cle:
         sys.exit("Variable GCM_API_KEY absente")
-    etat = json.load(open(a.etat)) if os.path.exists(a.etat) else {}
+    etats = json.load(open(a.etat)) if os.path.exists(a.etat) else {}
+    cle_etat = f"{a.url.rstrip('/')}|{a.exercice}"
+    etat = etats.setdefault(cle_etat, {})
     try:
         structures = appel(a.url, "/structures", cle)
         situations = appel(a.url, "/situations", cle, exercice=a.exercice)
@@ -62,7 +64,7 @@ def main():
         print(f"  {m['dateValidation']} {m['numero']} {m['structureCode']} {m['typeMouvement']} {m['montantTotal']}")
     if mouvements:
         etat["depuis"] = max((m["dateValidation"] for m in mouvements), key=instant)
-        json.dump(etat, open(a.etat, "w"))
+        json.dump(etats, open(a.etat, "w"), indent=1)
     sys.exit(1 if anomalies else 0)
 
 
