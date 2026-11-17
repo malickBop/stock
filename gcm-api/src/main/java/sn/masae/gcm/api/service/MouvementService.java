@@ -145,6 +145,7 @@ public class MouvementService implements ImpactHandler {
         reporterSiCloture(m);
         java.time.LocalDate today = ReferentielService.aujourdHui();
         if (today.getYear() == m.getExercice().getAnnee() && today.isAfter(m.getDateMouvement())) m.setDateMouvement(today);
+        m.setObservations("Transfert émis par " + m.getMouvementOrigine().getStructure().getCode() + " — réception confirmée");
         stock.appliquer(m);
         audit.tracer("CONFIRMATION_RECEPTION", "Mouvement", m.getId(), m.getStructure().getCode(),
                 m.getNumero() + " (transfert " + m.getMouvementOrigine().getNumero() + ")");
