@@ -200,7 +200,12 @@ public class GenerationService {
                 BigDecimal v = Montants.montant(l.getQuantite(), l.getValeurUnitaire());
                 valeur = valeur.add(v);
                 if (n == 5) {
-                    lignes.add(List.of(b.getCompte().getNumeroComplet(), b.getDesignation(), "", "", q(l.getQuantite()), f(l.getValeurUnitaire()), "", ""));
+                    // Colonnes : à conserver/transformer, à vendre (vente, cession), à démolir (destruction) ; sans décision : à vendre
+                    int col = r.getDecision() == DecisionReforme.DESTRUCTION ? 6 : 4;
+                    List<String> ligne = new ArrayList<>(List.of(b.getCompte().getNumeroComplet(), b.getDesignation(), "", "", "", "", "", ""));
+                    ligne.set(col, q(l.getQuantite()));
+                    ligne.set(col + 1, f(l.getValeurUnitaire()));
+                    lignes.add(ligne);
                 } else {
                     boolean vente = r.getDecision() == DecisionReforme.VENTE;
                     boolean destruction = r.getDecision() == DecisionReforme.DESTRUCTION;
@@ -219,16 +224,24 @@ public class GenerationService {
             Recensement r = d.getRecensement();
             valeurs.put("date", date(r.getDateFin() != null ? r.getDateFin() : r.getDateDebut()));
             valeurs.put("comptable entrant", valeurs.getOrDefault("comptable", ""));
-            BigDecimal ecart = BigDecimal.ZERO;
+            BigDecimal[] t = {BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO};
+            BigDecimal excedents = BigDecimal.ZERO;
+            BigDecimal manquants = BigDecimal.ZERO;
             for (RecensementLigne l : r.getLignes()) {
                 Bien b = l.getBien();
                 BigDecimal phys = Montants.nz(l.getQtePhysique());
-                BigDecimal diff = phys.subtract(Montants.nz(l.getQteTheorique()));
-                ecart = ecart.add(Montants.montant(diff, l.getPrixUnitaire()));
+                BigDecimal theo = Montants.nz(l.getQteTheorique());
+                BigDecimal diff = phys.subtract(theo);
+                BigDecimal v = Montants.montant(diff, l.getPrixUnitaire());
+                if (v.signum() > 0) excedents = excedents.add(v); else manquants = manquants.add(v.negate());
+                BigDecimal[] x = {b.getQteAttente(), b.getQteService(), b.getQteSortieProvisoire(), phys, theo, diff};
+                for (int i = 0; i < t.length; i++) t[i] = t[i].add(Montants.nz(x[i]));
                 lignes.add(List.of(b.getCompte().getNumeroComplet(), b.getDesignation(), q(b.getQteAttente()), q(b.getQteService()),
-                        q(b.getQteSortieProvisoire()), q(phys), q(l.getQteTheorique()), q(diff)));
+                        q(b.getQteSortieProvisoire()), q(phys), q(theo), q(diff)));
             }
-            totaux = List.of("TOTAUX", "", "", "", "", "", "", f(ecart) + " FCFA");
+            totaux = List.of("TOTAUX", "", q(t[0]), q(t[1]), q(t[2]), q(t[3]), q(t[4]), q(t[5]));
+            mentions.add(0, "Écarts valorisés : excédents " + f(excedents) + " FCFA, manquants " + f(manquants)
+                    + " FCFA, solde " + f(excedents.subtract(manquants)) + " FCFA.");
             valeurs.put("inventaire physique", valeurs.get("commission"));
         }
         if (n >= 23 && n <= 26) {

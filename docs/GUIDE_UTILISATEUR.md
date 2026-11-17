@@ -87,7 +87,7 @@ L'écran **Existant** présente chaque bien : quantités en attente d'affectatio
 
 - **Livre-journal et balance** : consultation par structure et exercice, export Excel, édition PDF des modèles n°10 et n°22. La balance signale tout déséquilibre (existant début + entrées − sorties ≠ existant fin).
 - **Modèles réglementaires** : téléchargement des 26 modèles, vierges ou pré-remplis pour les états calculés.
-- **Reddition des comptes** : préparez le compte de gestion (modèle n°23), le compte central (n°24), le bordereau de centralisation (n°25) ou le compte administratif (n°26). La pièce générée suit le circuit de validation jusqu'au dépôt, au plus tard le **30 juin N+1**.
+- **Reddition des comptes** : préparez le compte de gestion (modèle n°24), le compte central (n°25), le bordereau de centralisation (n°23) ou le compte administratif (n°26). La pièce générée suit le circuit de validation jusqu'au dépôt, au plus tard le **30 juin N+1**.
 
 ## 8. Référentiels
 

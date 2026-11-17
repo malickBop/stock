@@ -77,8 +77,8 @@ export const OBJETS_CERTIFICAT: Record<string, string> = {
 };
 export const DECISIONS_REFORME: Record<string, string> = { VENTE: 'Vente aux enchères', DESTRUCTION: 'Destruction', CESSION: 'Cession gratuite' };
 export const TYPES_REDDITION: Record<string, string> = {
-  COMPTE_GESTION: 'Compte de gestion (Modèle n°23)', COMPTE_CENTRAL: 'Compte central (Modèle n°24)', COMPTE_ADMINISTRATIF: 'Compte administratif (Modèle n°26)',
-  BORDEREAU_CENTRALISATION: 'Bordereau de centralisation (Modèle n°25)'
+  COMPTE_GESTION: 'Compte de gestion (Modèle n°24)', COMPTE_CENTRAL: 'Compte central (Modèle n°25)', COMPTE_ADMINISTRATIF: 'Compte administratif (Modèle n°26)',
+  BORDEREAU_CENTRALISATION: 'Bordereau de centralisation (Modèle n°23)'
 };
 export const ETATS_SORTIE_PROVISOIRE: Record<string, string> = {
   EN_COURS: 'En cours', PARTIELLEMENT_RETOURNEE: 'Partiellement retournée', EN_RETARD: 'En retard', SOLDEE: 'Soldée'
