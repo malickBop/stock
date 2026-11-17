@@ -200,12 +200,7 @@ public class GenerationService {
                 BigDecimal v = Montants.montant(l.getQuantite(), l.getValeurUnitaire());
                 valeur = valeur.add(v);
                 if (n == 5) {
-                    // Colonnes : à conserver/transformer, à vendre (vente, cession), à démolir (destruction) ; sans décision : à vendre
-                    int col = r.getDecision() == DecisionReforme.DESTRUCTION ? 6 : 4;
-                    List<String> ligne = new ArrayList<>(List.of(b.getCompte().getNumeroComplet(), b.getDesignation(), "", "", "", "", "", ""));
-                    ligne.set(col, q(l.getQuantite()));
-                    ligne.set(col + 1, f(l.getValeurUnitaire()));
-                    lignes.add(ligne);
+                    lignes.add(List.of(b.getCompte().getNumeroComplet(), b.getDesignation(), "", "", q(l.getQuantite()), f(l.getValeurUnitaire()), "", ""));
                 } else {
                     boolean vente = r.getDecision() == DecisionReforme.VENTE;
                     boolean destruction = r.getDecision() == DecisionReforme.DESTRUCTION;
