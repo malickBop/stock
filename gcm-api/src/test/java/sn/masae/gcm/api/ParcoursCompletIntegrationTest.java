@@ -233,6 +233,7 @@ class ParcoursCompletIntegrationTest {
         long reception = attente.get(0).path("id").asLong();
         mvc.perform(post("/api/mouvements/" + reception + "/valider").header("Authorization", b)).andExpect(status().isUnprocessableEntity());
         mvc.perform(post("/api/mouvements/" + reception + "/annuler").header("Authorization", b)).andExpect(status().isUnprocessableEntity());
+        mvc.perform(post("/api/mouvements/" + reception + "/confirmer-reception").header("Authorization", c)).andExpect(status().isForbidden());
         assertThat(send(post("/api/mouvements/" + reception + "/confirmer-reception"), b, null).path("statut").asText()).isEqualTo("VALIDE");
         JsonNode recus = lire("/api/biens?structureId=" + bfpa, b);
         assertThat(recus).hasSize(1);

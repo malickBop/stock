@@ -32,7 +32,7 @@ import { NotificationService } from '../core/notification.service';
     @if (receptionEnAttente(m)) {
       <div class="carte" style="margin-top:1rem"><p>Transfert <strong>{{ m.referencePiece }}</strong> émis par <strong>{{ m.tiers }}</strong> :
         les biens n'entreront dans l'existant de {{ m.structureCode }} qu'après confirmation de leur réception.</p>
-        @if (comptable) { <div class="ligne"><span class="espace"></span>
+        @if (comptable && m.structureId === auth.utilisateur()?.structureId) { <div class="ligne"><span class="espace"></span>
           <button class="secondaire" (click)="refuser(m)">Refuser la réception</button>
           <button (click)="confirmer(m)">Confirmer la réception</button></div> }</div> }
     @if (m.observations) { <p class="sous-titre">{{ m.observations }}</p> }
@@ -49,7 +49,8 @@ export class MouvementDetailComponent {
   m = signal<Mouvement | null>(null);
   types = TYPES_MOUVEMENT; sousTypes = SOUS_TYPES; statuts = STATUTS_WORKFLOW; statutsOp = STATUTS_OPERATION;
   private notif = inject(NotificationService);
-  comptable = inject(AuthService).a('COMPTABLE_PRINCIPAL', 'COMPTABLE_SECONDAIRE');
+  auth = inject(AuthService);
+  comptable = this.auth.a('COMPTABLE_PRINCIPAL', 'COMPTABLE_SECONDAIRE');
   constructor() { effect(() => this.charger()); }
   charger() { this.api.get<Mouvement>('/mouvements/' + this.id()).subscribe(m => this.m.set(m)); }
   valider(m: Mouvement) {

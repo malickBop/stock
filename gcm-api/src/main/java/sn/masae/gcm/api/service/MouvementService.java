@@ -182,8 +182,12 @@ public class MouvementService implements ImpactHandler {
         return dto(m);
     }
 
+    /** Seul un comptable de la structure destinataire elle-même confirme ou refuse (pas une structure de rattachement). */
     private Mouvement receptionEnAttente(Long id) {
         Mouvement m = mouvement(id);
+        if (!m.getStructure().getId().equals(securite.courant().structureId())) {
+            throw new BusinessException(ErrorCode.ACCES_REFUSE, "Seul le comptable de " + m.getStructure().getCode() + " peut confirmer ou refuser cette réception");
+        }
         if (!estReceptionTransfert(m) || m.getStatut() != StatutMouvement.BROUILLON) {
             throw new BusinessException(ErrorCode.WORKFLOW_TRANSITION_INVALIDE, m.getNumero() + " n'est pas un transfert reçu en attente de confirmation");
         }
