@@ -123,5 +123,7 @@ La documentation OpenAPI complète est disponible sur `/swagger-ui.html` (spéci
 ```bash
 mvn test                       # unitaires + intégration (Docker requis pour Testcontainers)
 cd frontend && npx ng build    # compilation de l'interface
+cd frontend && npm run test:ci # tests Angular (Chrome headless ; CHROME_BIN si Chrome n'est pas dans le PATH)
 ```
 Le test `ParcoursCompletIntegrationTest` déroule le parcours complet : réception au-delà du seuil, signatures de commission, visa CBM, scan, validation finale, stock, livre-journal, balance, génération PDF/DOCX, exports et préparation du compte de gestion.
+Les tests Angular couvrent la session et les rôles, l'intercepteur JWT (déconnexion sur 401), les formats FCFA/quantités/dates, les libellés réglementaires, la confirmation de réception réservée au comptable destinataire et la page des utilisateurs réservée à l'administrateur.

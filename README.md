@@ -28,7 +28,7 @@ Interface : `http://localhost` (port `GCM_HTTP_PORT`). Documentation de l'API : 
 | Base PostgreSQL | `docker run -d --name gcm-pg -e POSTGRES_DB=gcm -e POSTGRES_USER=gcm -e POSTGRES_PASSWORD=gcm -p 5432:5432 postgres:16-alpine` |
 | API (Java 17) | `mvn -pl gcm-api -am spring-boot:run` |
 | Interface (Node 18+) | `cd frontend && npm install && npm start` (proxy `/api` → `localhost:8080`) |
-| Tests | `mvn test` (les tests d'intégration Testcontainers nécessitent Docker) |
+| Tests | `mvn test` (les tests d'intégration Testcontainers nécessitent Docker) ; `cd frontend && npm run test:ci` (Angular) |
 
 ## Structure
 
