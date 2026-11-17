@@ -1,0 +1,50 @@
+# Plateforme GCM — MASAE : base PostgreSQL, API Spring Boot, interface Angular (nginx)
+# Démarrage : cp .env.example .env && (renseigner les secrets) && docker compose up -d --build
+# Production : docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-gcm}
+      POSTGRES_USER: ${POSTGRES_USER:-gcm}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD requis}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: gcm-api/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      GCM_DB_URL: jdbc:postgresql://db:5432/${POSTGRES_DB:-gcm}
+      GCM_DB_USER: ${POSTGRES_USER:-gcm}
+      GCM_DB_PASSWORD: ${POSTGRES_PASSWORD}
+      GCM_JWT_SECRET: ${GCM_JWT_SECRET:?GCM_JWT_SECRET requis}
+      GCM_DEMO_PASSWORD: ${GCM_DEMO_PASSWORD:-}
+      GCM_ADMIN_PASSWORD: ${GCM_ADMIN_PASSWORD:-}
+      GCM_SEED: ${GCM_SEED:-true}
+      GCM_STOCKAGE_DIR: /data/ged
+    volumes:
+      - ged:/data/ged
+
+  web:
+    build: ./frontend
+    restart: unless-stopped
+    depends_on:
+      - api
+    ports:
+      - "${GCM_HTTP_PORT:-80}:80"
+
+volumes:
+  pgdata:
+  ged:
