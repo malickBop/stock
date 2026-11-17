@@ -183,8 +183,15 @@ public class GenerationService {
                 default -> List.of("TOTAUX", "", q(qte), "", "", f(total));
             };
             if (n == 1) {
-                valeurs.put("arrêté", "Arrêté le présent procès-verbal à la somme de " + f(total) + " FCFA.");
+                valeurs.put("arrêté", "Arrêté le présent PV à " + q(qte) + " unité(s) représentant une valeur de " + f(total)
+                        + " FCFA que nous certifions avoir réceptionnées.");
                 mentions.add(0, valeurs.get("arrêté"));
+            }
+            if (n >= 2 && n <= 4) {
+                String objet = (n == 2 ? "déclare ce jour, augmenter mes prises en charge de " : n == 3 ? "déclare ce jour, diminuer mes prises en charge de "
+                        : "certifie la sortie provisoire de ");
+                int i = mentions.indexOf(mentions.stream().filter(x -> x.startsWith("CERTIFICATIONS")).findFirst().orElse(""));
+                mentions.add(i + 1, "Le comptable des matières, soussigné, " + objet + q(qte) + " unité(s) représentant une valeur de " + f(total) + " FCFA.");
             }
             if (n == 4 && m.getDateRetourPrevue() != null) mentions.add(0, "Date de retour prévue : " + date(m.getDateRetourPrevue()));
             if (n == 21 && d.getCertificat() != null) {

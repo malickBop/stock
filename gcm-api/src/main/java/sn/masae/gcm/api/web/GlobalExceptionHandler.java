@@ -71,6 +71,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(ErreurResponse.of(ErrorCode.VALIDATION.name(), e.getMessage(), null));
     }
 
+    @ExceptionHandler(org.springframework.web.servlet.resource.NoResourceFoundException.class)
+    public ResponseEntity<ErreurResponse> introuvable(org.springframework.web.servlet.resource.NoResourceFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErreurResponse.of(ErrorCode.RESSOURCE_INTROUVABLE.name(), "Ressource introuvable : /" + e.getResourcePath(), null));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErreurResponse> autre(Exception e) {
         LOG.error("Erreur inattendue", e);
